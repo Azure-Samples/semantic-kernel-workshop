@@ -130,7 +130,11 @@ function FunctionsDemo() {
                     }
                   }}
                 >
-                  <CardContent>
+                  <CardContent sx={{ 
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}>
                     <Typography variant="h6" gutterBottom>
                       {example.title}
                     </Typography>
@@ -148,11 +152,18 @@ function FunctionsDemo() {
                         borderRadius: 1,
                         border: '1px solid #eaeaea',
                         mb: 2,
-                        fontSize: '0.875rem',
-                        fontFamily: 'monospace'
+                        flexGrow: 1
                       }}
                     >
-                      {example.prompt}
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontSize: '0.875rem',
+                          fontFamily: 'monospace'
+                        }}
+                      >
+                        {example.prompt}
+                      </Typography>
                     </Box>
                     <Button 
                       variant="outlined" 

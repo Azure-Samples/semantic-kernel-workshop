@@ -120,14 +120,18 @@ When data is sent over a network, it travels down through these layers on the se
                     }
                   }}
                 >
-                  <CardContent>
+                  <CardContent sx={{ 
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}>
                     <Typography variant="h6" gutterBottom>
                       {example.title}
                     </Typography>
                     <Typography 
                       variant="body2" 
                       color="text.secondary" 
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 2, flexGrow: 1 }}
                     >
                       {example.text.substring(0, 150)}...
                     </Typography>

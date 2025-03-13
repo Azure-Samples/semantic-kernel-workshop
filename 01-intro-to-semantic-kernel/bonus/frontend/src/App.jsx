@@ -286,8 +286,8 @@ function App() {
           <AppBar
             position="fixed"
             sx={{
-              width: { md: `calc(100% - ${drawerWidth}px)` },
-              ml: { md: `${drawerWidth}px` },
+              width: { xs: 'calc(100% - 24px)', md: `calc(100% - ${drawerWidth}px - 24px)` },
+              ml: { xs: 12, md: `calc(${drawerWidth}px + 12px)` },
               zIndex: (theme) => theme.zIndex.drawer + 1,
               color: 'text.primary',
             }}
@@ -380,7 +380,7 @@ function App() {
             sx={{
               flexGrow: 1,
               p: 3,
-              width: { md: `calc(100% - ${drawerWidth}px)` },
+              width: { md: `calc(100% - ${drawerWidth}px - 48px)` },
               backgroundColor: '#F8FAFC',
               minHeight: '100vh',
             }}
