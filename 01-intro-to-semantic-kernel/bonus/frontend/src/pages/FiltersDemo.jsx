@@ -27,16 +27,20 @@ function FiltersDemo() {
 
   const exampleInputs = [
     {
-      title: "PII Data",
+      title: "Credit Card & Email",
       text: "My email is john.doe@example.com and my credit card number is 4111-1111-1111-1111"
     },
     {
-      title: "Sensitive Information",
+      title: "Phone & SSN",
       text: "Please call me at (555) 123-4567 or find my SSN: 123-45-6789"
     },
     {
-      title: "Mixed Content",
-      text: "My name is Alice Smith, my card number is 4111-1111-1111-1111, and I live at 123 Main St."
+      title: "Multiple PII Elements",
+      text: "Hi, I'm Alice Smith (alice.smith@gmail.com). My card is 4111-1111-1111-1111 and phone is (555) 123-4567."
+    },
+    {
+      title: "With Profanity",
+      text: "I'm really angry about my badword1 bill. My card ending in 1111 was charged incorrectly."
     }
   ];
 
@@ -97,9 +101,9 @@ function FiltersDemo() {
           color="text.secondary"
           sx={{ maxWidth: 800, mx: 'auto' }}
         >
-          Experience how Semantic Kernel filters provide control and visibility over function execution.
-          Filters can intercept and modify both inputs and outputs, enabling features like PII detection,
-          content moderation, and execution logging.
+          Experience how Semantic Kernel function invocation filters provide control and visibility over the AI pipeline.
+          These filters intercept function calls, allowing pre-processing of inputs and post-processing of outputs,
+          enabling powerful features like PII detection, content moderation, and execution logging.
         </Typography>
       </Box>
 
@@ -153,7 +157,7 @@ function FiltersDemo() {
                       }}
                     />
                   }
-                  label="PII Detection & Redaction"
+                  label="PII Detection Filter (Pre/Post Processing)"
                 />
                 <FormControlLabel
                   control={
@@ -171,7 +175,7 @@ function FiltersDemo() {
                       }}
                     />
                   }
-                  label="Content Moderation"
+                  label="Content Moderation Filter (Pre/Post Processing)"
                 />
                 <FormControlLabel
                   control={
@@ -189,7 +193,7 @@ function FiltersDemo() {
                       }}
                     />
                   }
-                  label="Function Execution Logging"
+                  label="Function Invocation Logging Filter"
                 />
               </Stack>
             </Box>
@@ -386,7 +390,7 @@ function FiltersDemo() {
 
       <Paper sx={{ p: 4, mt: 4, bgcolor: '#f8f9fa' }}>
         <Typography variant="h6" gutterBottom>
-          How Semantic Kernel Filters Work
+          How Semantic Kernel Function Invocation Filters Work
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
           <Chip 
@@ -398,7 +402,7 @@ function FiltersDemo() {
             }} 
           />
           <Typography>
-            Pre-processing filters intercept and potentially modify the input before function execution
+            The user's request is passed to the kernel, which prepares to invoke a function
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
@@ -411,7 +415,8 @@ function FiltersDemo() {
             }} 
           />
           <Typography>
-            The function executes with the filtered input, with logging filters tracking the process
+            <strong>Pre-processing filters</strong> run before the function executes, examining and potentially modifying the input 
+            (detect PII, log inputs, perform validation checks)
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
@@ -424,10 +429,10 @@ function FiltersDemo() {
             }} 
           />
           <Typography>
-            Post-processing filters can modify or validate the output before it's returned
+            The function executes with the filtered input (in this case, calling an LLM)
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
           <Chip 
             label="Step 4" 
             sx={{ 
@@ -437,7 +442,21 @@ function FiltersDemo() {
             }} 
           />
           <Typography>
-            Execution logs provide transparency into the entire filtering process
+            <strong>Post-processing filters</strong> run to analyze and potentially modify the output 
+            (detect sensitive information in responses, format results, log outputs)
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Chip 
+            label="Step 5" 
+            sx={{ 
+              bgcolor: '#64748b20',
+              color: '#64748b',
+              fontWeight: 600
+            }} 
+          />
+          <Typography>
+            The final output is returned to the application, with all filters helping enforce security and compliance
           </Typography>
         </Box>
       </Paper>

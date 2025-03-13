@@ -6,7 +6,7 @@ import {
   Card, CardContent, Alert, CircularProgress, Grid, Chip,
   Stack
 } from '@mui/material';
-import { Memory as MemoryIcon, Search as SearchIcon } from '@mui/icons-material';
+import { Memory as MemoryIcon, Search as SearchIcon, Assistant as AssistantIcon } from '@mui/icons-material';
 
 const API_URL = 'http://localhost:8000';
 
@@ -15,10 +15,12 @@ function MemoryDemo() {
   const [selectedCollection, setSelectedCollection] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [synthesizedResponse, setSynthesizedResponse] = useState('');
   const [newMemoryId, setNewMemoryId] = useState('');
   const [newMemoryText, setNewMemoryText] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: 'info' });
+  const [critique, setCritique] = useState('');
 
   useEffect(() => {
     fetchCollections();
@@ -51,12 +53,16 @@ function MemoryDemo() {
 
     try {
       setLoading(true);
+      setSynthesizedResponse('');
+      setCritique('');
       const response = await axios.post(`${API_URL}/memory/search`, {
         collection: selectedCollection,
         query: searchQuery,
         limit: 5
       });
       setSearchResults(response.data.results);
+      setSynthesizedResponse(response.data.synthesized_response);
+      setCritique(response.data.critique);
       setLoading(false);
       
       if (response.data.results.length === 0) {
@@ -251,6 +257,44 @@ function MemoryDemo() {
               </Button>
             </Paper>
 
+            {synthesizedResponse && (
+              <Paper 
+                sx={{ 
+                  p: 3,
+                  bgcolor: '#2563eb10',
+                  border: '1px solid #2563eb20'
+                }}
+              >
+                <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+                  <AssistantIcon sx={{ color: '#2563eb', fontSize: 32 }} />
+                  <Typography variant="h6" sx={{ color: '#2563eb' }}>
+                    AI Assistant
+                  </Typography>
+                </Stack>
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                  {synthesizedResponse}
+                </Typography>
+                {critique && (
+                  <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #2563eb20' }}>
+                    <Typography variant="subtitle2" sx={{ color: '#2563eb', mb: 1 }}>
+                      Response Quality:
+                    </Typography>
+                    <Chip
+                      label={critique}
+                      size="small"
+                      sx={{
+                        bgcolor: critique === 'Grounded' ? '#16a34a20' : 
+                                critique === 'Ungrounded' ? '#dc262620' : '#64748b20',
+                        color: critique === 'Grounded' ? '#16a34a' : 
+                               critique === 'Ungrounded' ? '#dc2626' : '#64748b',
+                        fontWeight: 500
+                      }}
+                    />
+                  </Box>
+                )}
+              </Paper>
+            )}
+
             {searchResults.length > 0 && (
               <Paper sx={{ p: 3 }}>
                 <Typography variant="h6" gutterBottom>
@@ -370,7 +414,7 @@ function MemoryDemo() {
             When searching, your query is also converted to an embedding
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
           <Chip 
             label="Step 4" 
             sx={{ 
@@ -381,6 +425,19 @@ function MemoryDemo() {
           />
           <Typography>
             Results are found by comparing embeddings, enabling semantic search
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Chip 
+            label="Step 5" 
+            sx={{ 
+              bgcolor: '#2563eb20',
+              color: '#2563eb',
+              fontWeight: 600
+            }} 
+          />
+          <Typography>
+            The AI assistant synthesizes the search results to provide a natural language response
           </Typography>
         </Box>
       </Paper>

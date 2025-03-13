@@ -4,7 +4,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { 
   AppBar, Toolbar, Typography, Container, Box, Drawer, 
   List, ListItem, ListItemIcon, ListItemText, CssBaseline,
-  IconButton, useMediaQuery, alpha
+  IconButton, useMediaQuery, Divider
 } from '@mui/material'
 import { 
   Menu as MenuIcon,
@@ -28,30 +28,28 @@ import FiltersDemo from './pages/FiltersDemo'
 
 const theme = createTheme({
   palette: {
-    mode: 'light',
     primary: {
-      main: '#0078d4',
-      light: '#3395dd',
-      dark: '#005499',
+      main: '#0070F3',
+      light: '#3291FF',
+      dark: '#0050AF',
     },
     secondary: {
-      main: '#2b2b2b',
-      light: '#525252',
-      dark: '#1e1e1e',
+      main: '#4E4B66',
+      light: '#78758F',
+      dark: '#333154',
     },
     background: {
-      default: '#ffffff',
-      paper: '#ffffff',
+      default: '#F8FAFC',
+      paper: '#FFFFFF',
     },
   },
   shape: {
-    borderRadius: 8,
+    borderRadius: 10,
   },
   typography: {
-    fontFamily: '"Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     h4: {
-      fontWeight: 600,
-      letterSpacing: '-0.02em',
+      fontWeight: 700,
     },
     h6: {
       fontWeight: 600,
@@ -60,19 +58,21 @@ const theme = createTheme({
   components: {
     MuiAppBar: {
       defaultProps: {
-        elevation: 0,
+        elevation: 1,
       },
       styleOverrides: {
         root: {
-          backgroundColor: '#ffffff',
-          borderBottom: '1px solid #eaeaea',
+          backgroundColor: '#FFFFFF',
+          borderBottom: '1px solid #E5E7EB',
         },
       },
     },
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          borderRight: '1px solid #eaeaea',
+          border: 'none',
+          backgroundColor: '#FFFFFF',
+          borderRight: '1px solid #E5E7EB',
         },
       },
     },
@@ -80,7 +80,12 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: 'none',
-          fontWeight: 500,
+          fontWeight: 600,
+          borderRadius: 8,
+          boxShadow: 'none',
+        },
+        contained: {
+          boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
         },
       },
     },
@@ -90,11 +95,12 @@ const theme = createTheme({
       },
       styleOverrides: {
         root: {
-          border: '1px solid #eaeaea',
+          border: '1px solid #E5E7EB',
+          overflow: 'hidden',
           transition: 'all 0.2s ease-in-out',
           '&:hover': {
-            borderColor: '#0078d4',
             transform: 'translateY(-2px)',
+            boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
           },
         },
       },
@@ -105,7 +111,8 @@ const theme = createTheme({
       },
       styleOverrides: {
         root: {
-          border: '1px solid #eaeaea',
+          border: '1px solid #E5E7EB',
+          borderRadius: 10,
         },
       },
     },
@@ -115,61 +122,160 @@ const theme = createTheme({
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-  const drawerWidth = 240;
+  const drawerWidth = 260;
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
 
-  const menuItems = [
-    { text: 'Home', icon: <HomeIcon />, path: '/' },
-    { text: 'Memory', icon: <MemoryIcon />, path: '/memory' },
-    { text: 'Functions', icon: <FunctionsIcon />, path: '/functions' },
-    { text: 'Translation', icon: <TranslateIcon />, path: '/translate' },
-    { text: 'Weather', icon: <WeatherIcon />, path: '/weather' },
-    { text: 'Summarization', icon: <SummarizeIcon />, path: '/summarize' },
-    { text: 'Filters', icon: <ShieldIcon />, path: '/filters' },
+  const handleNavClick = (path) => {
+    setCurrentPath(path);
+    if (!isDesktop) {
+      toggleDrawer();
+    }
+  };
+
+  const menuGroups = [
+    {
+      title: 'Main Features',
+      items: [
+        { text: 'Home', icon: <HomeIcon />, path: '/' },
+        { text: 'Semantic Memory', icon: <MemoryIcon />, path: '/memory' },
+        { text: 'Functions & Plugins', icon: <FunctionsIcon />, path: '/functions' },
+        { text: 'Filters & Security', icon: <ShieldIcon />, path: '/filters' },
+      ]
+    },
+    {
+      title: 'AI Capabilities',
+      items: [
+        { text: 'Translation', icon: <TranslateIcon />, path: '/translate' },
+        { text: 'Weather', icon: <WeatherIcon />, path: '/weather' },
+        { text: 'Summarization', icon: <SummarizeIcon />, path: '/summarize' },
+      ]
+    }
   ];
 
   const drawer = (
-    <>
+    <Box sx={{ py: 2 }}>
       <Toolbar />
-      <Box sx={{ overflow: 'auto' }}>
-        <List>
-          {menuItems.map((item) => (
-            <ListItem 
-              button 
-              key={item.text} 
-              component={Link} 
-              to={item.path}
-              onClick={() => !isDesktop && toggleDrawer()}
-              sx={{
-                borderRadius: 1,
-                mx: 1,
-                my: 0.5,
-                '&:hover': {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                },
-              }}
-            >
-              <ListItemIcon sx={{ 
-                minWidth: 40,
-                color: 'inherit'
-              }}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText 
-                primary={item.text} 
-                primaryTypographyProps={{
-                  fontSize: '0.9rem',
-                  fontWeight: 500
-                }}
-              />
-            </ListItem>
-          ))}
-        </List>
+      <Box sx={{ mb: 2, px: 3 }}>
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            mb: 3 
+          }}
+        >
+          <Box
+            sx={{
+              width: 36,
+              height: 36,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              bgcolor: 'primary.main',
+              borderRadius: 1.5,
+              color: 'white',
+              mr: 1.5,
+            }}
+          >
+            <FunctionsIcon fontSize="small" />
+          </Box>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              fontWeight: 700, 
+              color: 'primary.main'
+            }}
+          >
+            SK Playground
+          </Typography>
+        </Box>
       </Box>
-    </>
+      
+      <Divider sx={{ mb: 2 }} />
+
+      {menuGroups.map((group) => (
+        <Box key={group.title} sx={{ mb: 3 }}>
+          <Typography 
+            variant="overline" 
+            color="text.secondary"
+            sx={{ 
+              display: 'block', 
+              px: 3, 
+              mb: 1,
+              fontWeight: 600,
+              fontSize: '0.7rem',
+              letterSpacing: '0.08em',
+            }}
+          >
+            {group.title}
+          </Typography>
+          <List dense>
+            {group.items.map((item) => (
+              <ListItem 
+                key={item.text}
+                disablePadding
+              >
+                <ListItem
+                  button
+                  component={Link}
+                  to={item.path}
+                  onClick={() => handleNavClick(item.path)}
+                  sx={{
+                    mx: 1,
+                    my: 0.5,
+                    borderRadius: 1.5,
+                    pl: 2,
+                    bgcolor: currentPath === item.path ? 'rgba(0, 112, 243, 0.08)' : 'transparent',
+                    '&:hover': {
+                      bgcolor: currentPath === item.path ? 'rgba(0, 112, 243, 0.12)' : 'rgba(0, 0, 0, 0.04)',
+                    },
+                    position: 'relative',
+                    '&::before': currentPath === item.path ? {
+                      content: '""',
+                      position: 'absolute',
+                      left: 0,
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      width: '3px',
+                      height: '60%',
+                      bgcolor: 'primary.main',
+                      borderRadius: '0 2px 2px 0',
+                    } : {}
+                  }}
+                >
+                  <ListItemIcon sx={{ 
+                    minWidth: 36,
+                    color: currentPath === item.path ? 'primary.main' : 'text.secondary',
+                  }}>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary={item.text} 
+                    primaryTypographyProps={{
+                      fontSize: '0.9rem',
+                      fontWeight: currentPath === item.path ? 600 : 400,
+                      color: currentPath === item.path ? 'primary.main' : 'text.primary'
+                    }}
+                  />
+                </ListItem>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      ))}
+
+      <Box sx={{ mx: 3, mt: 2, p: 2, bgcolor: 'rgba(0, 112, 243, 0.05)', borderRadius: 2, border: '1px solid rgba(0, 112, 243, 0.1)' }}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'primary.main', mb: 1 }}>
+          Semantic Kernel Workshop
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8rem' }}>
+          Explore AI integration patterns with Microsoft's Semantic Kernel
+        </Typography>
+      </Box>
+    </Box>
   );
 
   return (
@@ -177,11 +283,13 @@ function App() {
       <CssBaseline />
       <Router>
         <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-          <AppBar 
-            position="fixed" 
-            sx={{ 
+          <AppBar
+            position="fixed"
+            sx={{
+              width: { md: `calc(100% - ${drawerWidth}px)` },
+              ml: { md: `${drawerWidth}px` },
               zIndex: (theme) => theme.zIndex.drawer + 1,
-              color: 'secondary.main',
+              color: 'text.primary',
             }}
           >
             <Toolbar>
@@ -190,26 +298,40 @@ function App() {
                 aria-label="open drawer"
                 edge="start"
                 onClick={toggleDrawer}
-                sx={{ 
+                sx={{
                   mr: 2,
                   display: { md: 'none' },
                 }}
               >
                 <MenuIcon />
               </IconButton>
-              <Typography 
-                variant="h6" 
-                noWrap 
-                component="div"
-                sx={{ 
-                  fontWeight: 600,
-                  background: 'linear-gradient(45deg, #0078d4 30%, #00a1f1 90%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
+              <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
                 Semantic Kernel Playground
               </Typography>
+              <Box sx={{ flexGrow: 1 }} />
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center',
+                  px: 2,
+                  py: 0.75,
+                  borderRadius: 2,
+                  bgcolor: 'rgba(0, 112, 243, 0.08)',
+                  color: 'primary.main',
+                  fontSize: '0.85rem',
+                  fontWeight: 500,
+                  '& span': {
+                    display: 'inline-block',
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    bgcolor: '#10B981',
+                    mr: 1
+                  }
+                }}
+              >
+                <span></span> Backend Connected
+              </Box>
             </Toolbar>
           </AppBar>
           
@@ -224,10 +346,9 @@ function App() {
               <Drawer
                 variant="permanent"
                 sx={{
-                  width: drawerWidth,
-                  '& .MuiDrawer-paper': { 
-                    width: drawerWidth,
+                  '& .MuiDrawer-paper': {
                     boxSizing: 'border-box',
+                    width: drawerWidth,
                   },
                 }}
                 open
@@ -239,10 +360,13 @@ function App() {
                 variant="temporary"
                 open={drawerOpen}
                 onClose={toggleDrawer}
+                ModalProps={{
+                  keepMounted: true, // Better open performance on mobile
+                }}
                 sx={{
-                  '& .MuiDrawer-paper': { 
-                    width: drawerWidth,
+                  '& .MuiDrawer-paper': {
                     boxSizing: 'border-box',
+                    width: drawerWidth,
                   },
                 }}
               >
@@ -257,12 +381,12 @@ function App() {
               flexGrow: 1,
               p: 3,
               width: { md: `calc(100% - ${drawerWidth}px)` },
-              backgroundColor: '#fafafa',
+              backgroundColor: '#F8FAFC',
               minHeight: '100vh',
             }}
           >
             <Toolbar />
-            <Container 
+            <Container
               maxWidth="lg"
               sx={{
                 py: 4,
@@ -285,4 +409,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

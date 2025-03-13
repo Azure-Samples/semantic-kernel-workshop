@@ -13,6 +13,7 @@ from semantic_kernel.connectors.ai.open_ai.services.azure_text_embedding import 
 from semantic_kernel.memory.semantic_text_memory import SemanticTextMemory
 from semantic_kernel.memory.volatile_memory_store import VolatileMemoryStore
 from semantic_kernel.functions.kernel_function_decorator import kernel_function
+from semantic_kernel.core_plugins.text_memory_plugin import TextMemoryPlugin
 from dotenv import load_dotenv
 from semantic_kernel.connectors.ai.open_ai import AzureChatPromptExecutionSettings
 from semantic_kernel.contents.chat_history import ChatHistory
@@ -77,6 +78,9 @@ kernel.add_service(embedding_service)
 # Initialize memory
 memory_store = VolatileMemoryStore()
 memory = SemanticTextMemory(storage=memory_store, embeddings_generator=embedding_service)
+
+# Add TextMemoryPlugin to the kernel
+kernel.add_plugin(TextMemoryPlugin(memory), "TextMemoryPlugin")
 
 # Sample collections
 FINANCE_COLLECTION = "finance"
@@ -203,8 +207,39 @@ async def search_memory(query: SearchQuery):
                 "text": result.text,
                 "relevance": result.relevance
             })
+        
+        # Synthesize a response using the LLM with TextMemoryPlugin
+        synthesized_response = ""
+        
+        if formatted_results:
+            # Create RAG prompt using TextMemoryPlugin's recall function
+            rag_prompt = """
+            Assistant can have a conversation about any topic.
+
+            Here is some background information that might help answer the user's question:
+            {{ recall $user_query collection="COLLECTION_NAME" }}
+
+            User: {{$user_query}}
+            Assistant:
+            """.strip().replace("COLLECTION_NAME", query.collection)
             
-        return {"results": formatted_results}
+            # Create a function using the prompt with recall
+            rag_function = kernel.add_function(
+                function_name="rag_response",
+                plugin_name="MemoryPlugin",
+                prompt=rag_prompt
+            )
+            
+            # Invoke the function to get a synthesized response
+            synthesized_response = await kernel.invoke(
+                rag_function,
+                user_query=query.query
+            )
+            
+        return {
+            "results": formatted_results,
+            "synthesized_response": str(synthesized_response)
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -409,56 +444,162 @@ class ProfanityFilter:
         
         return result, detected
 
+# Input filter function for semantic kernel
+async def input_filter_fn(context: FunctionInvocationContext, next: Callable[[FunctionInvocationContext], Awaitable[None]]) -> None:
+    """
+    Filter function that detects and redacts sensitive information from function inputs.
+    This demonstrates pre-processing in the Semantic Kernel pipeline.
+    """
+    logger.info(f"Input Filter - Processing input for {context.function.plugin_name}.{context.function.name}")
+    
+    # Check if there's an input parameter
+    if 'input' in context.arguments:
+        original_input = context.arguments['input']
+        
+        # Apply content filter to input
+        content_filter = ContentFilter()
+        filtered_input, detected = content_filter.redact_sensitive_info(str(original_input))
+        
+        if detected:
+            logger.info(f"Input Filter - Detected sensitive information: {', '.join(detected)}")
+            
+        # Apply profanity filter
+        profanity_filter = ProfanityFilter()
+        filtered_input, profanity_detected = profanity_filter.filter_content(filtered_input)
+        
+        if profanity_detected:
+            logger.info(f"Input Filter - Detected profanity: {', '.join(profanity_detected)}")
+            detected.extend(profanity_detected)
+            
+        # Replace the original input with the filtered version
+        context.arguments['input'] = filtered_input
+        
+        # Metadata handling is version-dependent
+        # Let's try to be compatible with both SK versions
+        try:
+            # Try to store detection info for later use
+            if hasattr(context, 'metadata'):
+                context.metadata['detected_items'] = detected
+            else:
+                # If metadata attribute doesn't exist, we'll just log the detections
+                logger.info(f"Metadata not available, detections logged only")
+        except Exception as e:
+            logger.warning(f"Could not store metadata: {str(e)}")
+    
+    # Continue to the next filter or function
+    await next(context)
+
+# Output filter function for semantic kernel
+async def output_filter_fn(context: FunctionInvocationContext, next: Callable[[FunctionInvocationContext], Awaitable[None]]) -> None:
+    """
+    Filter function that processes function outputs.
+    This demonstrates post-processing in the Semantic Kernel pipeline.
+    """
+    # First, continue to the next filter or execute the function
+    start_time = time.time()
+    await next(context)
+    execution_time = time.time() - start_time
+    
+    logger.info(f"Output Filter - Function {context.function.plugin_name}.{context.function.name} executed in {execution_time:.4f}s")
+    
+    # Process the output if it exists
+    if context.result:
+        logger.info(f"Output Filter - Processing result for {context.function.plugin_name}.{context.function.name}")
+        
+        # Check for sensitive information in the output
+        content_filter = ContentFilter()
+        filtered_output, detected = content_filter.redact_sensitive_info(str(context.result))
+        
+        if detected:
+            logger.info(f"Output Filter - Detected sensitive information in output: {', '.join(detected)}")
+            
+            try:
+                # Try to store metadata if the attribute exists
+                if hasattr(context, 'metadata'):
+                    context.metadata['original_output'] = str(context.result)
+                    context.metadata['output_detected_items'] = detected
+            except Exception as e:
+                logger.warning(f"Could not store metadata: {str(e)}")
+            
+            # Replace with filtered output
+            try:
+                from semantic_kernel.functions import FunctionResult
+                context.result = FunctionResult(
+                    function=context.function.metadata,
+                    value=filtered_output
+                )
+            except Exception as e:
+                # If FunctionResult fails, log it but continue
+                logger.warning(f"Couldn't create FunctionResult: {str(e)}")
+                # Try a direct string replacement as fallback
+                context.result = filtered_output
+
 @app.post("/filters/process")
 async def process_with_filters(request: FilterRequest):
     try:
-        # Capture logs if logging is enabled
+        # Create a new temporary kernel with filters for this request
+        temp_kernel = sk.Kernel()
+        
+        # Add the chat service to the temporary kernel
+        temp_kernel.add_service(chat_completion)
+        
+        # Set up log capture for this request
         logs = []
-        if request.filters.get('logging', True):
-            log_capture = StringIO()
-            log_handler = logging.StreamHandler(log_capture)
-            log_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-            logger.addHandler(log_handler)
+        log_capture = StringIO()
+        log_handler = logging.StreamHandler(log_capture)
+        log_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+        logger.addHandler(log_handler)
         
-        input_text = request.text
-        detected_items = []
+        # Add appropriate filters based on user selections
+        filter_results = {
+            "input_detected": [],
+            "output_detected": [],
+            "function_calls": []
+        }
         
-        # Pre-processing filters
-        if request.filters.get('pii', True):
-            logger.info("Applying PII detection filter")
-            content_filter = ContentFilter()
-            input_text, detected = content_filter.redact_sensitive_info(input_text)
-            detected_items.extend(detected)
+        if request.filters.get('pii', True) or request.filters.get('profanity', True):
+            # Add input and output filters
+            temp_kernel.add_filter('function_invocation', input_filter_fn)
+            temp_kernel.add_filter('function_invocation', output_filter_fn)
         
-        if request.filters.get('profanity', True):
-            logger.info("Applying profanity filter")
-            profanity_filter = ProfanityFilter()
-            input_text, detected = profanity_filter.filter_content(input_text)
-            detected_items.extend(detected)
+        # Create a demo function
+        echo_function = temp_kernel.add_function(
+            prompt="{{$input}}",
+            function_name="process_text",
+            plugin_name="FiltersDemo"
+        )
         
-        # Simulate function execution
-        logger.info(f"Processing filtered text (length: {len(input_text)})")
-        output_text = f"Processed: {input_text}"
+        # Process the input through our function
+        logger.info(f"Processing text via kernel function with filters")
+        result = await temp_kernel.invoke(echo_function, input=request.text)
         
-        # Post-processing result
-        if detected_items:
-            logger.info(f"Found {len(detected_items)} sensitive items")
+        # Get logs and clean up
+        logger.removeHandler(log_handler)
+        logs = log_capture.getvalue().splitlines()
+        log_capture.close()
         
-        # Get captured logs if logging was enabled
-        if request.filters.get('logging', True):
-            logger.removeHandler(log_handler)
-            logs = log_capture.getvalue().splitlines()
-            log_capture.close()
+        # Parse the logs to extract input and output processing information
+        input_processing = []
+        output_processing = []
+        
+        for log in logs:
+            if "Input Filter - Detected" in log:
+                item = log.split("Input Filter - Detected")[1].strip()
+                input_processing.append(item)
+            elif "Output Filter - Detected" in log:
+                item = log.split("Output Filter - Detected")[1].strip()
+                output_processing.append(item)
         
         return {
-            "input_processing": "Detected and redacted:\n" + "\n".join(detected_items) if detected_items else None,
-            "output_processing": output_text,
-            "logs": logs
+            "input_processing": "Detected and redacted:\n" + "\n".join(input_processing) if input_processing else None,
+            "output_processing": str(result),
+            "logs": logs if request.filters.get('logging', True) else []
         }
         
     except Exception as e:
         if 'log_handler' in locals():
             logger.removeHandler(log_handler)
+        logger.error(f"Error in process_with_filters: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Add the filter to the kernel
