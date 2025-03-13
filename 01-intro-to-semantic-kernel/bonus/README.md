@@ -15,7 +15,6 @@ AZURE_OPENAI_EMBEDDING_DEPLOYMENT=your-embedding-deployment-name
 2. Install dependencies:
 ```
 cd frontend && npm install
-cd ../backend && pip install -r requirements.txt
 ```
 
 3. Start the application:
@@ -36,7 +35,7 @@ The script will launch both the backend server (http://localhost:8000) and front
 ## Requirements
 
 - Node.js (v14+)
-- Python (v3.8+)
+- Python (v3.13+)
 - Azure OpenAI API credentials
 
 ## Project Structure
