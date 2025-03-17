@@ -4,38 +4,43 @@ import {
   Box, Typography, Paper, TextField, Button, 
   CircularProgress, Alert, Grid, Card, CardContent,
   Chip
-} from '../../../../../playground/frontend/node_modules/@mui/material';
-import { Summarize as SummarizeIcon } from '@mui/icons-material';
+} from '@mui/material';
+import { Functions as FunctionsIcon } from '@mui/icons-material';
 
 const API_URL = 'http://localhost:8000';
 
-function SummarizeDemo() {
-  const [text, setText] = useState('');
-  const [summary, setSummary] = useState('');
+function FunctionsDemo() {
+  const [prompt, setPrompt] = useState('{{$input}}\n\nRewrite this in a professional tone:');
+  const [inputText, setInputText] = useState('');
+  const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const exampleTexts = [
+  // Example prompts for users to try
+  const examplePrompts = [
     {
-      title: 'Semantic Kernel Overview',
-      text: `Semantic Kernel is a lightweight, open-source SDK that integrates Large Language Models (LLMs) with conventional programming languages. It combines natural language semantic functions, traditional code native functions, and embeddings-based memory to create AI-enabled experiences.
-Semantic Kernel acts as middleware between your application code and AI large language models (LLMs). It enables developers to easily integrate AI into apps by letting AI agents call code functions and by orchestrating complex tasks. SK is lightweight and modular, designed for enterprise-grade solutions with features like telemetry and filters for responsible AI. Major companies (including Microsoft) leverage SK because it's flexible and future-proof – you can swap in new AI models as they emerge without rewriting your code. In short, SK helps build robust, scalable AI applications that can evolve with advancing AI capabilities.`
+      title: 'Professional Rewriter',
+      prompt: '{{$input}}\n\nRewrite this in a professional tone:',
+      inputExample: 'Hey, I think we should meet up to talk about that project thing we were discussing last week. It\'s kind of important.',
+      description: 'Convert casual text into professional business communication.'
     },
     {
-      title: 'Memory in Semantic Kernel',
-      text: `In AI applications, memory is crucial for creating contextual, personalized experiences. Semantic Kernel provides powerful memory management capabilities that allow your AI applications to remember facts and knowledge over time, find information based on meaning rather than exact matches, use previous context in ongoing conversations, and implement Retrieval-Augmented Generation (RAG) patterns.
-When we save information to Semantic Memory, the system generates an embedding vector for the text, stores both the text and its vector in the memory store, and associates it with the given ID and collection. For semantic search, we provide a natural language query which the memory system converts to a vector embedding, compares against stored embeddings using cosine similarity, and returns the closest matching results. The search works even if the query doesn't exactly match the stored text, as it finds semantically similar content.`
+      title: 'Summarizer',
+      prompt: '{{$input}}\n\nTL;DR in one sentence:',
+      inputExample: 'Semantic Kernel is a lightweight SDK that integrates Large Language Models (LLMs) with conventional programming languages. It combines natural language semantic functions, traditional code native functions, and embeddings-based memory to create AI-enabled experiences.',
+      description: 'Create a one-sentence summary of longer text.'
     },
     {
-      title: 'Technical Article',
-      text: `The TCP/IP model is a conceptual framework used to understand and implement networking protocols. It consists of four layers: the Network Interface layer (handling physical connections), the Internet layer (managing logical addressing and routing), the Transport layer (ensuring reliable data transfer), and the Application layer (providing services to end-user applications).
-When data is sent over a network, it travels down through these layers on the sending device, with each layer adding its own header information. The data then travels across the network to the receiving device, where it moves up through the same layers in reverse order, with each layer processing and removing its respective header information. This layered approach allows for modular design and implementation of networking protocols, making it easier to update or replace specific components without affecting the entire system.`
+      title: 'Idea Generator',
+      prompt: '{{$input}}\n\nGenerate 5 creative ideas related to this topic:',
+      inputExample: 'Building a mobile app for personal finance management',
+      description: 'Generate creative ideas around a specific topic.'
     }
   ];
 
-  const handleSummarize = async () => {
-    if (!text.trim()) {
-      setError('Please enter text to summarize');
+  const handleInvokeFunction = async () => {
+    if (!prompt.trim() || !inputText.trim()) {
+      setError('Please provide both a prompt template and input text');
       return;
     }
 
@@ -43,22 +48,27 @@ When data is sent over a network, it travels down through these layers on the se
       setLoading(true);
       setError('');
       
-      const response = await axios.post(`${API_URL}/summarize`, {
-        text: text
+      const response = await axios.post(`${API_URL}/functions/semantic`, {
+        function_name: "professional_rewriter",
+        plugin_name: "TextFormatter",
+        prompt: prompt,
+        input_text: inputText,
+        parameters: {}
       });
       
-      setSummary(response.data.summary);
+      setResult(response.data.result);
       setLoading(false);
     } catch (error) {
-      console.error('Error summarizing text:', error);
-      setError('Error summarizing text. Please ensure the backend server is running.');
+      console.error('Error invoking function:', error);
+      setError('Error invoking semantic function. Please ensure the backend server is running.');
       setLoading(false);
     }
   };
 
   const loadExample = (example) => {
-    setText(example.text);
-    setSummary('');
+    setPrompt(example.prompt);
+    setInputText(example.inputExample);
+    setResult('');
   };
 
   return (
@@ -70,7 +80,7 @@ When data is sent over a network, it travels down through these layers on the se
           gutterBottom
           sx={{
             fontWeight: 700,
-            background: 'linear-gradient(45deg, #0891b2 30%, #22d3ee 90%)',
+            background: 'linear-gradient(45deg, #16a34a 30%, #22c55e 90%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             display: 'flex',
@@ -79,16 +89,16 @@ When data is sent over a network, it travels down through these layers on the se
             gap: 1
           }}
         >
-          <SummarizeIcon sx={{ fontSize: 35 }} />
-          Summarization
+          <FunctionsIcon sx={{ fontSize: 35 }} />
+          Semantic Functions
         </Typography>
         <Typography 
           variant="subtitle1" 
           color="text.secondary"
           sx={{ maxWidth: 600, mx: 'auto' }}
         >
-          Experience Semantic Kernel's text summarization capabilities powered by AI.
-          Turn lengthy content into concise, meaningful summaries.
+          Create and experiment with AI-powered semantic functions. Define your own prompts
+          or try our examples to see how Semantic Kernel processes natural language.
         </Typography>
       </Box>
 
@@ -105,10 +115,10 @@ When data is sent over a network, it travels down through these layers on the se
       <Grid container spacing={4}>
         <Grid item xs={12}>
           <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-            Example Texts
+            Example Functions
           </Typography>
           <Grid container spacing={2}>
-            {exampleTexts.map((example, index) => (
+            {examplePrompts.map((example, index) => (
               <Grid item xs={12} md={4} key={index}>
                 <Card 
                   sx={{ 
@@ -116,7 +126,7 @@ When data is sent over a network, it travels down through these layers on the se
                     transition: 'all 0.3s ease-in-out',
                     '&:hover': {
                       transform: 'translateY(-4px)',
-                      borderColor: '#0891b2',
+                      borderColor: '#16a34a',
                     }
                   }}
                 >
@@ -131,24 +141,44 @@ When data is sent over a network, it travels down through these layers on the se
                     <Typography 
                       variant="body2" 
                       color="text.secondary" 
-                      sx={{ mb: 2, flexGrow: 1 }}
+                      sx={{ mb: 2 }}
                     >
-                      {example.text.substring(0, 150)}...
+                      {example.description}
                     </Typography>
+                    <Box 
+                      sx={{ 
+                        p: 2, 
+                        bgcolor: '#f8f9fa',
+                        borderRadius: 1,
+                        border: '1px solid #eaeaea',
+                        mb: 2,
+                        flexGrow: 1
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontSize: '0.875rem',
+                          fontFamily: 'monospace'
+                        }}
+                      >
+                        {example.prompt}
+                      </Typography>
+                    </Box>
                     <Button 
                       variant="outlined" 
                       onClick={() => loadExample(example)}
                       fullWidth
                       sx={{
-                        borderColor: '#0891b2',
-                        color: '#0891b2',
+                        borderColor: '#16a34a',
+                        color: '#16a34a',
                         '&:hover': {
-                          borderColor: '#0891b2',
-                          backgroundColor: '#0891b210',
+                          borderColor: '#16a34a',
+                          backgroundColor: '#16a34a10',
                         }
                       }}
                     >
-                      Use This Example
+                      Try This Function
                     </Button>
                   </CardContent>
                 </Card>
@@ -157,7 +187,7 @@ When data is sent over a network, it travels down through these layers on the se
           </Grid>
         </Grid>
 
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={7}>
           <Paper 
             sx={{ 
               p: 3,
@@ -167,46 +197,59 @@ When data is sent over a network, it travels down through these layers on the se
             }}
           >
             <Typography variant="h6" gutterBottom>
-              Text to Summarize
+              Define Your Function
             </Typography>
             <TextField
-              label="Enter Text"
+              label="Prompt Template"
               fullWidth
+              margin="normal"
               multiline
-              rows={10}
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Enter text to summarize"
-              sx={{ mb: 2 }}
+              rows={4}
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Enter a prompt template with {{$input}} placeholder"
+              helperText="Use {{$input}} to indicate where the input text should be inserted"
+              sx={{ mb: 3 }}
+            />
+            <TextField
+              label="Input Text"
+              fullWidth
+              margin="normal"
+              multiline
+              rows={4}
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              placeholder="Enter the text to process"
+              sx={{ mb: 3 }}
             />
             <Button 
               variant="contained" 
               fullWidth 
-              onClick={handleSummarize}
+              onClick={handleInvokeFunction}
               disabled={loading}
               sx={{
-                bgcolor: '#0891b2',
+                bgcolor: '#16a34a',
                 '&:hover': {
-                  bgcolor: '#0e7490',
+                  bgcolor: '#15803d',
                 }
               }}
             >
-              {loading ? <CircularProgress size={24} /> : 'Summarize'}
+              {loading ? <CircularProgress size={24} /> : 'Run Function'}
             </Button>
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={5}>
           <Paper 
             sx={{ 
-              p: 3,
+              p: 2,
               height: '100%',
               display: 'flex',
               flexDirection: 'column'
             }}
           >
             <Typography variant="h6" gutterBottom>
-              Summary
+              Result
             </Typography>
             <Box sx={{ flexGrow: 1 }}>
               {loading ? (
@@ -219,9 +262,9 @@ When data is sent over a network, it travels down through these layers on the se
                     minHeight: 200
                   }}
                 >
-                  <CircularProgress sx={{ color: '#0891b2' }} />
+                  <CircularProgress sx={{ color: '#16a34a' }} />
                 </Box>
-              ) : summary ? (
+              ) : result ? (
                 <Box 
                   sx={{ 
                     mt: 2,
@@ -232,7 +275,7 @@ When data is sent over a network, it travels down through these layers on the se
                   }}
                 >
                   <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                    {summary}
+                    {result}
                   </Typography>
                 </Box>
               ) : (
@@ -247,9 +290,9 @@ When data is sent over a network, it travels down through these layers on the se
                     color: 'text.secondary'
                   }}
                 >
-                  <SummarizeIcon sx={{ fontSize: 48, mb: 2, opacity: 0.5 }} />
+                  <FunctionsIcon sx={{ fontSize: 48, mb: 2, opacity: 0.5 }} />
                   <Typography>
-                    Summary will appear here
+                    Function output will appear here
                   </Typography>
                 </Box>
               )}
@@ -260,45 +303,61 @@ When data is sent over a network, it travels down through these layers on the se
 
       <Paper sx={{ p: 4, mt: 4, bgcolor: '#f8f9fa' }}>
         <Typography variant="h6" gutterBottom>
-          How Summarization Works
+          How Semantic Functions Work
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
           <Chip 
             label="Step 1" 
             sx={{ 
-              bgcolor: '#0891b220',
-              color: '#0891b2',
+              bgcolor: '#16a34a20',
+              color: '#16a34a',
               fontWeight: 600
             }} 
           />
           <Typography>
-            Your text is processed by a semantic function with this prompt template: <code>{"{{{$input}}\\n\\nTL;DR in one sentence:"}</code>
+            Define your prompt template with placeholders like <code>{"{{{$input}}}"}</code>
           </Typography>
         </Box>
+
         <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
           <Chip 
             label="Step 2" 
             sx={{ 
-              bgcolor: '#0891b220',
-              color: '#0891b2',
+              bgcolor: '#16a34a20',
+              color: '#16a34a',
               fontWeight: 600
             }} 
           />
           <Typography>
-            The AI model analyzes the content to identify key information
+            Semantic Kernel replaces the placeholders with your input text
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+
+        <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
           <Chip 
             label="Step 3" 
             sx={{ 
-              bgcolor: '#0891b220',
-              color: '#0891b2',
+              bgcolor: '#16a34a20',
+              color: '#16a34a',
               fontWeight: 600
             }} 
           />
           <Typography>
-            A concise, one-sentence summary is generated while preserving the main points
+            The completed prompt is sent to the AI model for processing
+          </Typography>
+        </Box>
+
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Chip 
+            label="Step 4" 
+            sx={{ 
+              bgcolor: '#16a34a20',
+              color: '#16a34a',
+              fontWeight: 600
+            }} 
+          />
+          <Typography>
+            The model's response is returned as your function's output
           </Typography>
         </Box>
       </Paper>
@@ -306,4 +365,4 @@ When data is sent over a network, it travels down through these layers on the se
   );
 }
 
-export default SummarizeDemo;
+export default FunctionsDemo;

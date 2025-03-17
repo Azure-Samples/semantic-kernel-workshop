@@ -2,40 +2,45 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { 
   Box, Typography, Paper, TextField, Button, 
-  CircularProgress, Alert, Grid, Card, CardContent,
-  Chip
-} from '../../../../../playground/frontend/node_modules/@mui/material';
-import { Summarize as SummarizeIcon } from '@mui/icons-material';
+  CircularProgress, Alert, Grid, MenuItem, Select,
+  FormControl, InputLabel, Card, CardContent,
+  Chip, Divider
+} from '@mui/material';
+import { Translate as TranslateIcon } from '@mui/icons-material';
 
 const API_URL = 'http://localhost:8000';
 
-function SummarizeDemo() {
+function TranslateDemo() {
   const [text, setText] = useState('');
-  const [summary, setSummary] = useState('');
+  const [targetLanguage, setTargetLanguage] = useState('French');
+  const [translatedText, setTranslatedText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const languages = [
+    'French', 'Spanish', 'German', 'Italian', 'Portuguese', 
+    'Russian', 'Japanese', 'Chinese', 'Korean', 'Arabic',
+    'Hindi', 'Dutch', 'Swedish', 'Greek', 'Turkish'
+  ];
+
   const exampleTexts = [
     {
-      title: 'Semantic Kernel Overview',
-      text: `Semantic Kernel is a lightweight, open-source SDK that integrates Large Language Models (LLMs) with conventional programming languages. It combines natural language semantic functions, traditional code native functions, and embeddings-based memory to create AI-enabled experiences.
-Semantic Kernel acts as middleware between your application code and AI large language models (LLMs). It enables developers to easily integrate AI into apps by letting AI agents call code functions and by orchestrating complex tasks. SK is lightweight and modular, designed for enterprise-grade solutions with features like telemetry and filters for responsible AI. Major companies (including Microsoft) leverage SK because it's flexible and future-proof – you can swap in new AI models as they emerge without rewriting your code. In short, SK helps build robust, scalable AI applications that can evolve with advancing AI capabilities.`
+      title: 'Semantic Kernel Introduction',
+      text: 'Semantic Kernel is an open-source SDK that integrates Large Language Models (LLMs) with conventional programming languages. It enables developers to build AI applications that combine the best of both worlds.'
     },
     {
-      title: 'Memory in Semantic Kernel',
-      text: `In AI applications, memory is crucial for creating contextual, personalized experiences. Semantic Kernel provides powerful memory management capabilities that allow your AI applications to remember facts and knowledge over time, find information based on meaning rather than exact matches, use previous context in ongoing conversations, and implement Retrieval-Augmented Generation (RAG) patterns.
-When we save information to Semantic Memory, the system generates an embedding vector for the text, stores both the text and its vector in the memory store, and associates it with the given ID and collection. For semantic search, we provide a natural language query which the memory system converts to a vector embedding, compares against stored embeddings using cosine similarity, and returns the closest matching results. The search works even if the query doesn't exactly match the stored text, as it finds semantically similar content.`
+      title: 'Technical Documentation',
+      text: 'To install the package, run "pip install semantic-kernel" in your terminal. Then import the library using "import semantic_kernel as sk" in your Python code.'
     },
     {
-      title: 'Technical Article',
-      text: `The TCP/IP model is a conceptual framework used to understand and implement networking protocols. It consists of four layers: the Network Interface layer (handling physical connections), the Internet layer (managing logical addressing and routing), the Transport layer (ensuring reliable data transfer), and the Application layer (providing services to end-user applications).
-When data is sent over a network, it travels down through these layers on the sending device, with each layer adding its own header information. The data then travels across the network to the receiving device, where it moves up through the same layers in reverse order, with each layer processing and removing its respective header information. This layered approach allows for modular design and implementation of networking protocols, making it easier to update or replace specific components without affecting the entire system.`
+      title: 'Casual Conversation',
+      text: 'Hey there! I was wondering if you\'d like to join us for dinner tonight? We\'re planning to try that new restaurant downtown around 7pm.'
     }
   ];
 
-  const handleSummarize = async () => {
+  const handleTranslate = async () => {
     if (!text.trim()) {
-      setError('Please enter text to summarize');
+      setError('Please enter text to translate');
       return;
     }
 
@@ -43,22 +48,23 @@ When data is sent over a network, it travels down through these layers on the se
       setLoading(true);
       setError('');
       
-      const response = await axios.post(`${API_URL}/summarize`, {
-        text: text
+      const response = await axios.post(`${API_URL}/translate`, {
+        text: text,
+        target_language: targetLanguage
       });
       
-      setSummary(response.data.summary);
+      setTranslatedText(response.data.translated_text);
       setLoading(false);
     } catch (error) {
-      console.error('Error summarizing text:', error);
-      setError('Error summarizing text. Please ensure the backend server is running.');
+      console.error('Error translating text:', error);
+      setError('Error translating text. Please ensure the backend server is running.');
       setLoading(false);
     }
   };
 
   const loadExample = (example) => {
     setText(example.text);
-    setSummary('');
+    setTranslatedText('');
   };
 
   return (
@@ -70,7 +76,7 @@ When data is sent over a network, it travels down through these layers on the se
           gutterBottom
           sx={{
             fontWeight: 700,
-            background: 'linear-gradient(45deg, #0891b2 30%, #22d3ee 90%)',
+            background: 'linear-gradient(45deg, #9333ea 30%, #c084fc 90%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             display: 'flex',
@@ -79,16 +85,16 @@ When data is sent over a network, it travels down through these layers on the se
             gap: 1
           }}
         >
-          <SummarizeIcon sx={{ fontSize: 35 }} />
-          Summarization
+          <TranslateIcon sx={{ fontSize: 35 }} />
+          Translation
         </Typography>
         <Typography 
           variant="subtitle1" 
           color="text.secondary"
           sx={{ maxWidth: 600, mx: 'auto' }}
         >
-          Experience Semantic Kernel's text summarization capabilities powered by AI.
-          Turn lengthy content into concise, meaningful summaries.
+          This demo showcases Semantic Kernel's ability to translate text between languages
+          using AI-powered semantic functions.
         </Typography>
       </Box>
 
@@ -116,7 +122,7 @@ When data is sent over a network, it travels down through these layers on the se
                     transition: 'all 0.3s ease-in-out',
                     '&:hover': {
                       transform: 'translateY(-4px)',
-                      borderColor: '#0891b2',
+                      borderColor: '#9333ea',
                     }
                   }}
                 >
@@ -133,18 +139,20 @@ When data is sent over a network, it travels down through these layers on the se
                       color="text.secondary" 
                       sx={{ mb: 2, flexGrow: 1 }}
                     >
-                      {example.text.substring(0, 150)}...
+                      {example.text.length > 100 
+                        ? example.text.substring(0, 100) + '...' 
+                        : example.text}
                     </Typography>
                     <Button 
                       variant="outlined" 
                       onClick={() => loadExample(example)}
                       fullWidth
                       sx={{
-                        borderColor: '#0891b2',
-                        color: '#0891b2',
+                        borderColor: '#9333ea',
+                        color: '#9333ea',
                         '&:hover': {
-                          borderColor: '#0891b2',
-                          backgroundColor: '#0891b210',
+                          borderColor: '#9333ea',
+                          backgroundColor: '#9333ea10',
                         }
                       }}
                     >
@@ -157,7 +165,7 @@ When data is sent over a network, it travels down through these layers on the se
           </Grid>
         </Grid>
 
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={6}>
           <Paper 
             sx={{ 
               p: 3,
@@ -167,36 +175,52 @@ When data is sent over a network, it travels down through these layers on the se
             }}
           >
             <Typography variant="h6" gutterBottom>
-              Text to Summarize
+              Text to Translate
             </Typography>
-            <TextField
-              label="Enter Text"
-              fullWidth
-              multiline
-              rows={10}
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Enter text to summarize"
-              sx={{ mb: 2 }}
-            />
-            <Button 
-              variant="contained" 
-              fullWidth 
-              onClick={handleSummarize}
-              disabled={loading}
-              sx={{
-                bgcolor: '#0891b2',
-                '&:hover': {
-                  bgcolor: '#0e7490',
-                }
-              }}
-            >
-              {loading ? <CircularProgress size={24} /> : 'Summarize'}
-            </Button>
+            <Box sx={{ mb: 3 }}>
+              <FormControl fullWidth sx={{ mb: 3 }}>
+                <InputLabel>Target Language</InputLabel>
+                <Select
+                  value={targetLanguage}
+                  label="Target Language"
+                  onChange={(e) => setTargetLanguage(e.target.value)}
+                >
+                  {languages.map((language) => (
+                    <MenuItem key={language} value={language}>
+                      {language}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                label="Enter Text"
+                fullWidth
+                multiline
+                rows={6}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Enter text to translate"
+                sx={{ mb: 2 }}
+              />
+              <Button 
+                variant="contained" 
+                fullWidth 
+                onClick={handleTranslate}
+                disabled={loading}
+                sx={{
+                  bgcolor: '#9333ea',
+                  '&:hover': {
+                    bgcolor: '#7e22ce',
+                  }
+                }}
+              >
+                {loading ? <CircularProgress size={24} /> : 'Translate'}
+              </Button>
+            </Box>
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={6}>
           <Paper 
             sx={{ 
               p: 3,
@@ -206,7 +230,7 @@ When data is sent over a network, it travels down through these layers on the se
             }}
           >
             <Typography variant="h6" gutterBottom>
-              Summary
+              Translation Result
             </Typography>
             <Box sx={{ flexGrow: 1 }}>
               {loading ? (
@@ -219,9 +243,9 @@ When data is sent over a network, it travels down through these layers on the se
                     minHeight: 200
                   }}
                 >
-                  <CircularProgress sx={{ color: '#0891b2' }} />
+                  <CircularProgress sx={{ color: '#9333ea' }} />
                 </Box>
-              ) : summary ? (
+              ) : translatedText ? (
                 <Box 
                   sx={{ 
                     mt: 2,
@@ -232,7 +256,7 @@ When data is sent over a network, it travels down through these layers on the se
                   }}
                 >
                   <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                    {summary}
+                    {translatedText}
                   </Typography>
                 </Box>
               ) : (
@@ -247,9 +271,9 @@ When data is sent over a network, it travels down through these layers on the se
                     color: 'text.secondary'
                   }}
                 >
-                  <SummarizeIcon sx={{ fontSize: 48, mb: 2, opacity: 0.5 }} />
+                  <TranslateIcon sx={{ fontSize: 48, mb: 2, opacity: 0.5 }} />
                   <Typography>
-                    Summary will appear here
+                    Translation will appear here
                   </Typography>
                 </Box>
               )}
@@ -260,45 +284,45 @@ When data is sent over a network, it travels down through these layers on the se
 
       <Paper sx={{ p: 4, mt: 4, bgcolor: '#f8f9fa' }}>
         <Typography variant="h6" gutterBottom>
-          How Summarization Works
+          How Translation Works
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
           <Chip 
             label="Step 1" 
             sx={{ 
-              bgcolor: '#0891b220',
-              color: '#0891b2',
+              bgcolor: '#9333ea20',
+              color: '#9333ea',
               fontWeight: 600
             }} 
           />
           <Typography>
-            Your text is processed by a semantic function with this prompt template: <code>{"{{{$input}}\\n\\nTL;DR in one sentence:"}</code>
+            Your text is processed by a semantic function with this prompt template: <code>{"{{{$input}}\\n\\nTranslate this into {{$target_language}}:"}</code>
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
           <Chip 
             label="Step 2" 
             sx={{ 
-              bgcolor: '#0891b220',
-              color: '#0891b2',
+              bgcolor: '#9333ea20',
+              color: '#9333ea',
               fontWeight: 600
             }} 
           />
           <Typography>
-            The AI model analyzes the content to identify key information
+            The AI model receives your text and target language as inputs
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Chip 
             label="Step 3" 
             sx={{ 
-              bgcolor: '#0891b220',
-              color: '#0891b2',
+              bgcolor: '#9333ea20',
+              color: '#9333ea',
               fontWeight: 600
             }} 
           />
           <Typography>
-            A concise, one-sentence summary is generated while preserving the main points
+            The model processes the request and returns the translated text
           </Typography>
         </Box>
       </Paper>
@@ -306,4 +330,4 @@ When data is sent over a network, it travels down through these layers on the se
   );
 }
 
-export default SummarizeDemo;
+export default TranslateDemo;
