@@ -575,49 +575,33 @@ async def agent_chat(request: AgentRequest):
             max_tokens=1000
         )
         
-        # Variable to track plugin calls
-        plugin_calls = []
+        # Set up function calling behavior
+        execution_settings.function_choice_behavior = FunctionChoiceBehavior.Auto()
         
         # Get the response from the agent
         response = await agent.get_response(chat_history, execution_settings=execution_settings)
         
-        # Check if the message is about weather and the Weather plugin is enabled
-        if "Weather" in request.available_plugins and any(keyword in request.message.lower() for keyword in ["weather", "temperature", "forecast", "climate", "rain", "snow", "alert"]):
-            # Extract city name using the same approach as in the weather endpoint
-            process_query_prompt = """
-            Extract the city name from the following weather query. If multiple cities are mentioned, focus on the first one.
-            If no city is explicitly mentioned, respond with "New York".
-            Query: {{$input}}
-            City:"""
-            
-            process_query_fn = kernel.add_function(
-                prompt=process_query_prompt,
-                function_name="process_query",
-                plugin_name="WeatherQueryProcessor"
-            )
-            
-            # Extract city from query
-            city_result = await kernel.invoke(process_query_fn, input=request.message)
-            city = str(city_result).strip()
-            
-            # Add plugin calls for visualization
-            plugin_calls.append({
-                "plugin_name": "Weather",
-                "function_name": "get_current_weather",
-                "parameters": {"location": city}
-            })
-            
-            plugin_calls.append({
-                "plugin_name": "Weather",
-                "function_name": "get_forecast",
-                "parameters": {"location": city, "days": 3}
-            })
-            
-            plugin_calls.append({
-                "plugin_name": "Weather",
-                "function_name": "get_weather_alert",
-                "parameters": {"location": city}
-            })
+        # Track function calls
+        plugin_calls = []
+        
+        # Extract function calls from the chat history
+        for message in chat_history:
+            for item in message.items:
+                if isinstance(item, FunctionCallContent):
+                    # Convert arguments to a dictionary if it's a string
+                    args = item.arguments
+                    if isinstance(args, str):
+                        import json
+                        try:
+                            args = json.loads(args)
+                        except:
+                            args = {"location": args}
+                    
+                    plugin_calls.append({
+                        "plugin_name": item.plugin_name,
+                        "function_name": item.function_name,
+                        "parameters": args
+                    })
         
         # Return the agent's response along with the updated chat history and plugin calls
         return {
