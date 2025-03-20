@@ -89,7 +89,7 @@ export default function FunctionsDemo() {
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-green-400 flex items-center justify-center gap-2">
-            <FunctionSquare className="h-7 w-7" />
+            <FunctionSquare className="h-7 w-7 text-green-600" />
             Semantic Functions
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">

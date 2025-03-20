@@ -72,7 +72,7 @@ export default function SummarizeDemo() {
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-700 to-cyan-400 flex items-center justify-center gap-2">
-            <GraduationCap className="h-7 w-7" />
+            <GraduationCap className="h-7 w-7 text-cyan-600" />
             Summarization
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">

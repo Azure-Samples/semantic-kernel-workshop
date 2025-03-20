@@ -195,6 +195,47 @@ const teamTemplates: AgentTemplate[] = [
   }
 ];
 
+// Add these helper functions at the top of the file, after the imports
+const getAgentName = (content: string): string | null => {
+  if (!content.startsWith('[')) return null;
+  const match = content.match(/^\[(.*?)\]:/);
+  return match ? match[1] : null;
+};
+
+const getAgentColor = (content: string): string => {
+  const agentName = getAgentName(content);
+  if (!agentName) return 'bg-purple-500';
+  
+  const agent = defaultAgentTemplates.find(a => a.name === agentName);
+  return agent ? agent.color : 'bg-purple-500';
+};
+
+const getAgentBackground = (content: string): string => {
+  const agentName = getAgentName(content);
+  if (!agentName) return 'bg-gray-100 text-gray-900';
+  
+  const agent = defaultAgentTemplates.find(a => a.name === agentName);
+  if (!agent) return 'bg-gray-100 text-gray-900';
+  
+  // Convert hex to RGB for background opacity
+  const hex = agent.color.replace('#', '');
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  
+  return `border-2 text-gray-900 border-[${agent.color}]` + 
+         ` style="background-color: rgba(${r}, ${g}, ${b}, 0.1);"`;
+};
+
+const getAgentIcon = (content: string) => {
+  const agentName = getAgentName(content);
+  if (!agentName) return <Bot className="h-4 w-4" />;
+  
+  const agent = defaultAgentTemplates.find(a => a.name === agentName);
+  const Icon = agent ? agent.icon : Bot;
+  return <Icon className="h-4 w-4" />;
+};
+
 export default function MultiAgentDemo() {
   // Chat state
   const [messages, setMessages] = useState<Message[]>([]);
@@ -382,7 +423,10 @@ export default function MultiAgentDemo() {
       return;
     }
     
-    if (editingAgent.name === '') {
+    // Check if an agent with this name already exists
+    const existingAgent = agents.find(agent => agent.name === editingAgent.name);
+    
+    if (!existingAgent) {
       // Add new agent
       setAgents(prev => [...prev, editingAgent]);
     } else {
@@ -410,8 +454,8 @@ export default function MultiAgentDemo() {
       <div className="flex flex-col space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-500 flex items-center gap-2">
-            <Sparkles className="h-7 w-7" />
+          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-500 flex items-center justify-center gap-2">
+            <Sparkles className="h-7 w-7 text-indigo-600" />
             Multi-Agent Chat
           </h1>
           <div className="flex gap-2">
@@ -696,14 +740,14 @@ export default function MultiAgentDemo() {
                                 ? 'bg-blue-500' 
                                 : message.role === 'plugin' 
                                   ? 'bg-green-500' 
-                                  : 'bg-purple-500'
+                                  : getAgentColor(message.content)
                             } h-8 w-8`}>
                               <AvatarFallback>
                                 {message.role === 'user' 
                                   ? 'U' 
                                   : message.role === 'plugin' 
                                     ? <Code className="h-4 w-4" /> 
-                                    : <Bot className="h-4 w-4" />}
+                                    : getAgentIcon(message.content)}
                               </AvatarFallback>
                             </Avatar>
                             
@@ -713,8 +757,16 @@ export default function MultiAgentDemo() {
                                   ? 'bg-blue-500 text-white' 
                                   : message.role === 'plugin' 
                                     ? 'bg-green-500 text-white' 
-                                    : 'bg-gray-100 text-gray-900'
+                                    : 'text-gray-900 border-2'
                               }`}
+                              style={
+                                message.role === 'assistant' && message.content.startsWith('[')
+                                  ? {
+                                      backgroundColor: `${getAgentColor(message.content)}20`,
+                                      borderColor: getAgentColor(message.content)
+                                    }
+                                  : undefined
+                              }
                             >
                               {message.role === 'plugin' ? (
                                 <div>
@@ -726,7 +778,20 @@ export default function MultiAgentDemo() {
                                   </pre>
                                 </div>
                               ) : (
-                                <p className="whitespace-pre-wrap">{message.content}</p>
+                                <div>
+                                  {message.role === 'assistant' && message.content.startsWith('[') && (
+                                    <p className="font-medium mb-1 text-sm" style={{ 
+                                      color: getAgentColor(message.content)
+                                    }}>
+                                      {getAgentName(message.content)}
+                                    </p>
+                                  )}
+                                  <p className="whitespace-pre-wrap">{
+                                    message.role === 'assistant' && message.content.startsWith('[') 
+                                      ? message.content.substring(message.content.indexOf(']:') + 2).trim()
+                                      : message.content
+                                  }</p>
+                                </div>
                               )}
                             </div>
                           </div>

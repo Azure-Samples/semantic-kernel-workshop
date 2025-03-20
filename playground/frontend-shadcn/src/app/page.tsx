@@ -16,42 +16,42 @@ const features = [
   {
     title: 'Semantic Memory',
     description: 'Experience AI-powered memory management with semantic search capabilities.',
-    icon: <MemoryStick className="h-8 w-8" />,
+    icon: <MemoryStick className="h-8 w-8 text-blue-600" />,
     path: '/memory',
     color: '#2563eb'
   },
   {
     title: 'Semantic Functions',
     description: 'Create and use AI functions with natural language prompts.',
-    icon: <FunctionSquare className="h-8 w-8" />,
+    icon: <FunctionSquare className="h-8 w-8 text-green-600" />,
     path: '/functions',
     color: '#16a34a'
   },
   {
     title: 'Translation',
     description: 'Translate text between multiple languages using AI.',
-    icon: <Languages className="h-8 w-8" />,
+    icon: <Languages className="h-8 w-8 text-purple-600" />,
     path: '/translate',
     color: '#9333ea'
   },
   {
     title: 'Weather Plugin',
     description: 'Get weather information using a custom Semantic Kernel plugin.',
-    icon: <SunMedium className="h-8 w-8" />,
+    icon: <SunMedium className="h-8 w-8 text-orange-600" />,
     path: '/weather',
     color: '#ea580c'
   },
   {
     title: 'Text Summarization',
     description: 'Generate concise summaries of longer texts using AI.',
-    icon: <GraduationCap className="h-8 w-8" />,
+    icon: <GraduationCap className="h-8 w-8 text-cyan-600" />,
     path: '/summarize',
     color: '#0891b2'
   },
   {
     title: 'SK Filters',
     description: 'Explore pre and post-processing filters for enhanced security and control.',
-    icon: <Shield className="h-8 w-8" />,
+    icon: <Shield className="h-8 w-8 text-slate-600" />,
     path: '/filters',
     color: '#64748b'
   }
@@ -74,14 +74,10 @@ export default function Home() {
           {features.map((feature) => (
             <Card 
               key={feature.title} 
-              className="border overflow-hidden transition-all duration-300 hover:shadow-lg"
+              className={`card-gradient flex flex-col gap-6 rounded-xl py-6 shadow-sm border overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-[${feature.color}] hover:-translate-y-1`}
               style={{ 
-                borderColor: 'transparent',
-                '&:hover': {
-                  borderColor: feature.color,
-                  transform: 'translateY(-4px)',
-                  boxShadow: `0 4px 20px ${feature.color}15`
-                }
+                borderColor: `${feature.color}30`,
+                boxShadow: `0 2px 10px rgba(0,0,0,0.05)`,
               }}
             >
               <CardContent className="p-6 flex flex-col items-center text-center">
@@ -101,12 +97,10 @@ export default function Home() {
                 <Button 
                   asChild
                   variant="outline"
+                  className={`hover:bg-opacity-10 hover:bg-[${feature.color}]`}
                   style={{ 
                     borderColor: feature.color, 
                     color: feature.color,
-                    '&:hover': {
-                      backgroundColor: `${feature.color}10`,
-                    }
                   }}
                 >
                   <Link href={feature.path}>Try Demo</Link>

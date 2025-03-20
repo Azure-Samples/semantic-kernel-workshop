@@ -214,8 +214,8 @@ Be imaginative while maintaining coherent narratives.`,
       <div className="flex flex-col space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-500 flex items-center gap-2">
-            <Bot className="h-7 w-7" />
+          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-500 flex items-center justify-center gap-2">
+            <Bot className="h-7 w-7 text-indigo-600" />
             Agent Demo
           </h1>
           <TooltipProvider>

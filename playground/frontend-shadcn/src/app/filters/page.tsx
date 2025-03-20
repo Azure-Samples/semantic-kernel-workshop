@@ -100,7 +100,7 @@ export default function FiltersDemo() {
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-slate-600 to-slate-400 flex items-center justify-center gap-2">
-            <ShieldCheck className="h-7 w-7" />
+            <ShieldCheck className="h-7 w-7 text-slate-600" />
             Semantic Kernel Filters
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">

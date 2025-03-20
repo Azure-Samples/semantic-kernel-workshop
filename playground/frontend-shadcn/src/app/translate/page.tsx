@@ -85,7 +85,7 @@ export default function TranslateDemo() {
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-purple-400 flex items-center justify-center gap-2">
-            <Languages className="h-7 w-7" />
+            <Languages className="h-7 w-7 text-purple-600" />
             Translation
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">

@@ -74,7 +74,7 @@ export default function WeatherDemo() {
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-700 to-orange-400 flex items-center justify-center gap-2">
-            <SunMedium className="h-7 w-7" />
+            <SunMedium className="h-7 w-7 text-orange-600" />
             Weather
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
@@ -194,7 +194,7 @@ export default function WeatherDemo() {
                       <Card className="border bg-gray-50">
                         <CardContent className="p-4">
                           <div className="flex items-center gap-2 mb-3">
-                            <SunMedium className="h-5 w-5 text-gray-600" />
+                            <SunMedium className="h-5 w-5 text-orange-600" />
                             <h3 className="font-medium text-gray-600">Current Weather</h3>
                           </div>
                           <p>{weatherData.current_weather}</p>
