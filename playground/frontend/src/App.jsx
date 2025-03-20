@@ -15,7 +15,8 @@ import {
   WbSunny as WeatherIcon,
   Summarize as SummarizeIcon,
   Shield as ShieldIcon,
-  SmartToy as AgentIcon
+  SmartToy as AgentIcon,
+  Groups as GroupsIcon
 } from '@mui/icons-material'
 
 // Import pages
@@ -27,6 +28,7 @@ import WeatherDemo from './pages/WeatherDemo'
 import SummarizeDemo from './pages/SummarizeDemo'
 import FiltersDemo from './pages/FiltersDemo'
 import AgentDemo from './pages/AgentDemo'
+import MultiAgentDemo from './pages/MultiAgentDemo'
 
 const theme = createTheme({
   palette: {
@@ -146,6 +148,7 @@ function App() {
         { text: 'Semantic Memory', icon: <MemoryIcon />, path: '/memory' },
         { text: 'Functions & Plugins', icon: <FunctionsIcon />, path: '/functions' },
         { text: 'Agent Demo', icon: <AgentIcon />, path: '/agent' },
+        { text: 'Multi-Agent Chat', icon: <GroupsIcon />, path: '/multi-agent' },
         { text: 'Filters & Security', icon: <ShieldIcon />, path: '/filters' },
       ]
     },
@@ -404,6 +407,7 @@ function App() {
                 <Route path="/summarize" element={<SummarizeDemo />} />
                 <Route path="/filters" element={<FiltersDemo />} />
                 <Route path="/agent" element={<AgentDemo />} />
+                <Route path="/multi-agent" element={<MultiAgentDemo />} />
               </Routes>
             </Container>
           </Box>
