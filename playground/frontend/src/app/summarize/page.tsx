@@ -8,6 +8,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CodeToggle } from '@/components/ui/code-toggle';
+import { CodeBlocks } from '@/components/ui/code-block';
+import { getCodeExamplesForDemo } from '@/lib/code-examples';
 
 // Import icons individually
 import { GraduationCap } from "lucide-react";
@@ -68,136 +71,141 @@ export default function SummarizeDemo() {
 
   return (
     <Shell>
-      <div className="flex flex-col space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-700 to-cyan-400 flex items-center justify-center gap-2">
-            <GraduationCap className="h-7 w-7 text-cyan-600" />
-            Summarization
-          </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Experience Semantic Kernel's text summarization capabilities powered by AI.
-            Turn lengthy content into concise, meaningful summaries.
-          </p>
-        </div>
+      <CodeToggle 
+        content={
+          <div className="flex flex-col space-y-6">
+            {/* Header */}
+            <div className="text-center space-y-2">
+              <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-700 to-cyan-400 flex items-center justify-center gap-2">
+                <GraduationCap className="h-7 w-7 text-cyan-600" />
+                Summarization
+              </h1>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Experience Semantic Kernel's text summarization capabilities powered by AI.
+                Turn lengthy content into concise, meaningful summaries.
+              </p>
+            </div>
 
-        {/* Alert for errors */}
-        {error && (
-          <Alert 
-            className="border-red-500 text-red-500"
-          >
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        {/* Example Texts */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Example Texts</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {exampleTexts.map((example, index) => (
-              <Card 
-                key={index}
-                className="border transition-all duration-300 hover:shadow-md hover:-translate-y-1 hover:border-cyan-500"
+            {/* Alert for errors */}
+            {error && (
+              <Alert 
+                className="border-red-500 text-red-500"
               >
-                <CardContent className="p-6 flex flex-col h-full">
-                  <h3 className="text-lg font-semibold mb-2">{example.title}</h3>
-                  <p className="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">
-                    {example.text.substring(0, 150)}...
-                  </p>
-                  <Button 
-                    onClick={() => loadExample(example)}
-                    variant="outline"
-                    className="w-full border-cyan-600 text-cyan-600 hover:bg-cyan-50"
-                  >
-                    Use This Example
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
-        {/* Summarization Components */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          {/* Text Input */}
-          <div className="md:col-span-8">
-            <Card className="border shadow-sm">
-              <CardContent className="p-6 space-y-4">
-                <h2 className="text-xl font-semibold">Text to Summarize</h2>
-                
-                <div className="space-y-4">
-                  <Textarea
-                    placeholder="Enter text to summarize"
-                    rows={10}
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    className="resize-none"
-                  />
-                  
-                  <Button 
-                    className="w-full bg-cyan-600 hover:bg-cyan-700"
-                    onClick={handleSummarize}
-                    disabled={loading}
-                  >
-                    {loading ? 'Summarizing...' : 'Summarize'}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Summary Result */}
-          <div className="md:col-span-4">
-            <Card className="border shadow-sm h-full">
-              <CardContent className="p-6 flex flex-col h-full">
-                <h2 className="text-xl font-semibold mb-4">Summary</h2>
-                
-                <div className="flex-grow flex flex-col items-center justify-center">
-                  {loading ? (
-                    <div className="flex flex-col items-center justify-center text-gray-500">
-                      <div className="h-6 w-6 border-2 border-cyan-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-                      <p>Summarizing...</p>
-                    </div>
-                  ) : summary ? (
-                    <div className="w-full p-4 bg-gray-50 border border-gray-200 rounded whitespace-pre-wrap">
-                      {summary}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center text-gray-500">
-                      <GraduationCap className="h-12 w-12 mb-4 opacity-50" />
-                      <p>Summary will appear here</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* How it works */}
-        <Card className="border bg-gray-50 shadow-sm">
-          <CardContent className="p-6">
-            <h3 className="text-xl font-semibold mb-4">How Summarization Works</h3>
-            
+            {/* Example Texts */}
             <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <Badge className="bg-cyan-100 text-cyan-600 hover:bg-cyan-100">Step 1</Badge>
-                <p>Your text is processed by a semantic function with this prompt template: <code>{"{{{$input}}\\n\\nTL;DR in one sentence:"}</code></p>
-              </div>
-              
-              <div className="flex items-start gap-3">
-                <Badge className="bg-cyan-100 text-cyan-600 hover:bg-cyan-100">Step 2</Badge>
-                <p>The AI model analyzes the content to identify key information</p>
-              </div>
-              
-              <div className="flex items-start gap-3">
-                <Badge className="bg-cyan-100 text-cyan-600 hover:bg-cyan-100">Step 3</Badge>
-                <p>A concise, one-sentence summary is generated while preserving the main points</p>
+              <h2 className="text-xl font-semibold">Example Texts</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {exampleTexts.map((example, index) => (
+                  <Card 
+                    key={index}
+                    className="border transition-all duration-300 hover:shadow-md hover:-translate-y-1 hover:border-cyan-500"
+                  >
+                    <CardContent className="p-6 flex flex-col h-full">
+                      <h3 className="text-lg font-semibold mb-2">{example.title}</h3>
+                      <p className="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">
+                        {example.text.substring(0, 150)}...
+                      </p>
+                      <Button 
+                        onClick={() => loadExample(example)}
+                        variant="outline"
+                        className="w-full border-cyan-600 text-cyan-600 hover:bg-cyan-50"
+                      >
+                        Use This Example
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+
+            {/* Summarization Components */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+              {/* Text Input */}
+              <div className="md:col-span-8">
+                <Card className="border shadow-sm">
+                  <CardContent className="p-6 space-y-4">
+                    <h2 className="text-xl font-semibold">Text to Summarize</h2>
+                    
+                    <div className="space-y-4">
+                      <Textarea
+                        placeholder="Enter text to summarize"
+                        rows={10}
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        className="resize-none"
+                      />
+                      
+                      <Button 
+                        className="w-full bg-cyan-600 hover:bg-cyan-700"
+                        onClick={handleSummarize}
+                        disabled={loading}
+                      >
+                        {loading ? 'Summarizing...' : 'Summarize'}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Summary Result */}
+              <div className="md:col-span-4">
+                <Card className="border shadow-sm h-full">
+                  <CardContent className="p-6 flex flex-col h-full">
+                    <h2 className="text-xl font-semibold mb-4">Summary</h2>
+                    
+                    <div className="flex-grow flex flex-col items-center justify-center">
+                      {loading ? (
+                        <div className="flex flex-col items-center justify-center text-gray-500">
+                          <div className="h-6 w-6 border-2 border-cyan-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+                          <p>Summarizing...</p>
+                        </div>
+                      ) : summary ? (
+                        <div className="w-full p-4 bg-gray-50 border border-gray-200 rounded whitespace-pre-wrap">
+                          {summary}
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-gray-500">
+                          <GraduationCap className="h-12 w-12 mb-4 opacity-50" />
+                          <p>Summary will appear here</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+
+            {/* How it works */}
+            <Card className="border bg-gray-50 shadow-sm">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-4">How Summarization Works</h3>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <Badge className="bg-cyan-100 text-cyan-600 hover:bg-cyan-100">Step 1</Badge>
+                    <p>Your text is processed by a semantic function with this prompt template: <code>{"{{{$input}}\\n\\nTL;DR in one sentence:"}</code></p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <Badge className="bg-cyan-100 text-cyan-600 hover:bg-cyan-100">Step 2</Badge>
+                    <p>The AI model analyzes the content to identify key information</p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <Badge className="bg-cyan-100 text-cyan-600 hover:bg-cyan-100">Step 3</Badge>
+                    <p>A concise, one-sentence summary is generated while preserving the main points</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        }
+        codeView={<CodeBlocks files={getCodeExamplesForDemo('summarize')} />}
+      />
     </Shell>
   );
 } 

@@ -19,14 +19,27 @@
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.9 0 0);
+  --input: oklch(0.9 0 0);
+  --ring: oklch(0.205 0 0);
+  --code-keyword: #7839d4;
+  --code-string: #c08431;
+  --code-function: #2e78c2;
+  --code-comment: #8a8a8a;
+  --code-number: #c04e31;
+  --code-tag: #0ea5e9;
+  --code-operator: #666666;
+  --code-variable: #2e6f95;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --chart-3: oklch(0.78 0.179 98.642);
+  --chart-4: oklch(0.646 0.222 41.116 / 60%);
+  --chart-5: oklch(0.6 0.118 184.704 / 60%);
+  --chart-6: oklch(0.78 0.179 98.642 / 60%);
+  --chart-7: oklch(0.646 0.222 41.116 / 30%);
+  --chart-8: oklch(0.6 0.118 184.704 / 30%);
+  --chart-9: oklch(0.78 0.179 98.642 / 30%);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -77,29 +90,42 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0 / 90%);
+  --background: oklch(0.131 0 0);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.15 0 0 / 98%);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  --popover: oklch(0.15 0 0);
+  --popover-foreground: oklch(0.95 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.145 0 0);
+  --secondary: oklch(0.15 0 0);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --muted: oklch(0.22 0 0);
+  --muted-foreground: oklch(0.755 0 0);
+  --accent: oklch(0.2 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --destructive: oklch(0.573 0.25 25.156);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.183 0 0);
+  --input: oklch(0.183 0 0);
+  --ring: oklch(0.755 0 0);
+  --code-keyword: #c586c0;
+  --code-string: #ce9178;
+  --code-function: #dcdcaa;
+  --code-comment: #6a9955;
+  --code-number: #b5cea8;
+  --code-tag: #4ec9b0;
+  --code-operator: #d4d4d4;
+  --code-variable: #9cdcfe;
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --chart-3: oklch(0.666 0.174 72.375);
+  --chart-4: oklch(0.488 0.243 264.376 / 60%);
+  --chart-5: oklch(0.696 0.17 162.48 / 60%);
+  --chart-6: oklch(0.666 0.174 72.375 / 60%);
+  --chart-7: oklch(0.488 0.243 264.376 / 30%);
+  --chart-8: oklch(0.696 0.17 162.48 / 30%);
+  --chart-9: oklch(0.666 0.174 72.375 / 30%);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -115,16 +141,122 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer components {
   .card-gradient {
-    background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.8));
+    background: radial-gradient(circle at top right, rgba(0, 145, 255, 0.05) 0%, rgba(2, 132, 174, 0) 100%);
   }
   
   .dark .card-gradient {
-    background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.2));
+    background: radial-gradient(circle at top right, rgba(0, 145, 255, 0.06) 0%, rgba(2, 132, 174, 0) 100%);
   }
+}
+
+/* Basic syntax highlighting */
+.language-typescript .token.keyword,
+.language-javascript .token.keyword,
+.language-python .token.keyword {
+  color: var(--code-keyword);
+  font-weight: bold;
+}
+
+.language-typescript .token.string,
+.language-javascript .token.string,
+.language-python .token.string {
+  color: var(--code-string);
+}
+
+.language-typescript .token.function,
+.language-javascript .token.function,
+.language-python .token.function {
+  color: var(--code-function);
+}
+
+.language-typescript .token.comment,
+.language-javascript .token.comment,
+.language-python .token.comment {
+  color: var(--code-comment);
+  font-style: italic;
+}
+
+.language-typescript .token.number,
+.language-javascript .token.number,
+.language-python .token.number {
+  color: var(--code-number);
+}
+
+.language-typescript .token.tag,
+.language-javascript .token.tag,
+.language-html .token.tag {
+  color: var(--code-tag);
+}
+
+.language-typescript .token.operator,
+.language-javascript .token.operator,
+.language-python .token.operator {
+  color: var(--code-operator);
+}
+
+.language-typescript .token.variable,
+.language-javascript .token.variable,
+.language-python .token.variable {
+  color: var(--code-variable);
+}
+
+/* Keyword highlighting for specific languages */
+.language-python .token.def,
+.language-python .token.class,
+.language-python .token.import,
+.language-python .token.from,
+.language-python .token.return,
+.language-python .token.await,
+.language-python .token.async {
+  color: var(--code-keyword);
+  font-weight: bold;
+}
+
+/* Shiki Styling */
+.shiki {
+  overflow-x: auto;
+  tab-size: 2;
+}
+
+.shiki code {
+  display: grid;
+}
+
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  /* Optional, if you also want variables for the default theme */
+  --shiki-dark: #d4d4d4;
+  --shiki-dark-bg: #1e1e1e;
+}
+
+/* Basic styling for code blocks */
+pre {
+  tab-size: 2;
+  -moz-tab-size: 2;
+}
+
+.language-python,
+.language-typescript,
+.language-javascript,
+.language-bash {
+  color: #24292e;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  font-size: 0.9em;
+  line-height: 1.6;
+}
+
+.dark .language-python,
+.dark .language-typescript,
+.dark .language-javascript,
+.dark .language-bash {
+  color: #e1e4e8;
 }
