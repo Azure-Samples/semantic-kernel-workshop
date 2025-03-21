@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from './card';
 import { Button } from './button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
-import { Copy, Check } from 'lucide-react';
-import * as shiki from 'shiki';
+import { Copy, Check, FileCode } from 'lucide-react';
 
 export interface CodeFile {
   name: string;
@@ -19,47 +18,9 @@ interface CodeBlocksProps {
 export function CodeBlocks({ files }: CodeBlocksProps) {
   const [activeTab, setActiveTab] = useState(files[0]?.name || '');
   const [copied, setCopied] = useState(false);
-  const [highlightedCode, setHighlightedCode] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const loadHighlighter = async () => {
-      try {
-        setIsLoading(true);
-        // Create a highlighter
-        const highlighter = await shiki.getHighlighter({
-          theme: 'github-light',
-          langs: ['python', 'typescript', 'javascript', 'bash', 'tsx', 'jsx']
-        });
-
-        // Highlight all files
-        const highlighted: Record<string, string> = {};
-        for (const file of files) {
-          const html = highlighter.codeToHtml(file.code, { 
-            lang: file.language
-          });
-          highlighted[file.name] = html;
-        }
-
-        setHighlightedCode(highlighted);
-      } catch (error) {
-        console.error('Error highlighting code:', error);
-        // Fallback for each file
-        const highlighted: Record<string, string> = {};
-        for (const file of files) {
-          highlighted[file.name] = `<pre><code>${escapeHtml(file.code)}</code></pre>`;
-        }
-        setHighlightedCode(highlighted);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadHighlighter();
-  }, [files]);
 
   const copyToClipboard = (code: string) => {
-    navigator.clipboard.writeText(code);
+    navigator.clipboard.writeText(code || '');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -70,7 +31,10 @@ export function CodeBlocks({ files }: CodeBlocksProps) {
     <Card className="border shadow-sm">
       <CardContent className="p-0">
         <div className="border-b border-gray-200 bg-muted px-4 py-2 flex justify-between items-center">
-          <h3 className="text-sm font-medium text-gray-700">Source Code</h3>
+          <h3 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+            <FileCode className="h-4 w-4 text-cyan-600" />
+            Source Code
+          </h3>
           <Button
             variant="ghost"
             size="sm"
@@ -114,17 +78,9 @@ export function CodeBlocks({ files }: CodeBlocksProps) {
                 </div>
               )}
               <div className="relative">
-                {isLoading ? (
-                  <div className="p-4 overflow-auto font-mono text-sm bg-gray-50" style={{ maxHeight: '400px' }}>
-                    Loading...
-                  </div>
-                ) : (
-                  <div 
-                    className="shiki p-4 overflow-auto font-mono text-sm bg-gray-50" 
-                    style={{ maxHeight: '400px' }}
-                    dangerouslySetInnerHTML={{ __html: highlightedCode[file.name] || '' }} 
-                  />
-                )}
+                <pre className="p-4 overflow-auto font-mono text-sm bg-gray-50 dark:bg-[#0d1117] text-gray-800 dark:text-gray-300" style={{ maxHeight: '400px' }}>
+                  <code className={`language-${file.language || 'text'}`}>{file.code || '// No code available'}</code>
+                </pre>
               </div>
             </TabsContent>
           ))}
@@ -133,13 +89,3 @@ export function CodeBlocks({ files }: CodeBlocksProps) {
     </Card>
   );
 }
-
-// Simple function to escape HTML
-const escapeHtml = (text: string): string => {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}; 

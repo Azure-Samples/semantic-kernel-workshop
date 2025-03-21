@@ -14,8 +14,16 @@ import { FunctionSquare } from "lucide-react";
 
 const API_URL = 'http://localhost:8000';
 
+// Define the type for example prompts
+interface ExamplePrompt {
+  title: string;
+  prompt: string;
+  inputExample: string;
+  description: string;
+}
+
 // Example prompts for users to try
-const examplePrompts = [
+const examplePrompts: ExamplePrompt[] = [
   {
     title: 'Professional Rewriter',
     prompt: '{{$input}}\n\nRewrite this in a professional tone:',
@@ -72,14 +80,14 @@ export default function FunctionsDemo() {
     }
   };
 
-  const loadExample = (example) => {
+  const loadExample = (example: ExamplePrompt) => {
     setPrompt(example.prompt);
     setInputText(example.inputExample);
     setResult('');
   };
 
   // Function to safely display strings with curly braces in JSX
-  const displayWithCurlyBraces = (text) => {
+  const displayWithCurlyBraces = (text: string) => {
     return text.split('{{').join('{ "{" }').split('}}').join('{ "}" }');
   };
 
@@ -90,11 +98,11 @@ export default function FunctionsDemo() {
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-green-400 flex items-center justify-center gap-2">
             <FunctionSquare className="h-7 w-7 text-green-600" />
-            Semantic Functions
+            Functions & Plugins
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Create and experiment with AI-powered semantic functions. Define your own prompts
-            or try our examples to see how Semantic Kernel processes natural language.
+            Create AI-powered semantic functions with custom prompt templates.
+            Define how the AI should process your input with simple, reusable templates.
           </p>
         </div>
 
@@ -107,7 +115,7 @@ export default function FunctionsDemo() {
           </Alert>
         )}
 
-        {/* Example Functions */}
+        {/* Example prompts */}
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">Example Functions</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -135,7 +143,7 @@ export default function FunctionsDemo() {
           </div>
         </div>
 
-        {/* Function Definition and Result */}
+        {/* Function Components */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           {/* Define Function */}
           <div className="md:col-span-7">
@@ -236,4 +244,4 @@ export default function FunctionsDemo() {
       </div>
     </Shell>
   );
-} 
+}
