@@ -10,6 +10,8 @@ import { SunMedium } from "lucide-react";
 import { GraduationCap } from "lucide-react";
 import { Shield } from "lucide-react";
 import { Languages } from "lucide-react";
+import { Workflow } from "lucide-react";
+import { Bot } from "lucide-react";
 
 // Define features
 const features = [
@@ -54,6 +56,20 @@ const features = [
     icon: <Shield className="h-8 w-8 text-slate-600" />,
     path: '/filters',
     color: '#64748b'
+  },
+  {
+    title: 'Process Framework',
+    description: 'Learn how to build structured, event-driven conversational flows with the SK Process Framework.',
+    icon: <Workflow className="h-8 w-8 text-teal-600" />,
+    path: '/process',
+    color: '#0d9488'
+  },
+  {
+    title: 'Agent Chat',
+    description: 'Interact with an AI agent powered by Semantic Kernel and plugins.',
+    icon: <Bot className="h-8 w-8 text-indigo-600" />,
+    path: '/agent',
+    color: '#4f46e5'
   }
 ];
 

@@ -14,6 +14,8 @@ import { Bot } from "lucide-react";
 import { Languages } from "lucide-react";
 import { Users } from "lucide-react";
 import { Menu } from "lucide-react";
+import { Workflow } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 // Import shadcn sidebar components
 import {
@@ -54,6 +56,12 @@ const menuGroups = [
       { text: 'Translation', icon: <Languages className="h-5 w-5" />, path: '/translate' },
       { text: 'Weather', icon: <SunMedium className="h-5 w-5" />, path: '/weather' },
       { text: 'Summarization', icon: <GraduationCap className="h-5 w-5" />, path: '/summarize' },
+    ]
+  },
+  {
+    title: 'Process Framework',
+    items: [
+      { text: 'Chat Process', icon: <MessageSquare className="h-5 w-5" />, path: '/process' },
     ]
   },
   {

@@ -1,6 +1,0 @@
-fastapi==0.110.0
-uvicorn==0.27.1
-semantic-kernel==0.9.1b1
-python-dotenv==1.0.1
-pydantic==2.6.1
-python-multipart==0.0.9
