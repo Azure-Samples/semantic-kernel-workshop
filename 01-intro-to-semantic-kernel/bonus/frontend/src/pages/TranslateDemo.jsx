@@ -5,7 +5,7 @@ import {
   CircularProgress, Alert, Grid, MenuItem, Select,
   FormControl, InputLabel, Card, CardContent,
   Chip, Divider
-} from '../../../../../playground/frontend/node_modules/@mui/material';
+} from '@mui/material';
 import { Translate as TranslateIcon } from '@mui/icons-material';
 
 const API_URL = 'http://localhost:8000';
