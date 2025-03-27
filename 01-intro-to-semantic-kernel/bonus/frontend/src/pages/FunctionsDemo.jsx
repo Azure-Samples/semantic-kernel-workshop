@@ -4,7 +4,7 @@ import {
   Box, Typography, Paper, TextField, Button, 
   CircularProgress, Alert, Grid, Card, CardContent,
   Chip
-} from '../../../../../playground/frontend/node_modules/@mui/material';
+} from '@mui/material';
 import { Functions as FunctionsIcon } from '@mui/icons-material';
 
 const API_URL = 'http://localhost:8000';
