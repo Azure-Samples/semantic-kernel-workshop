@@ -24,7 +24,9 @@ class FunctionInput(BaseModel):
 
 class AgentRequest(BaseModel):
     message: str
-    system_prompt: str = "You are a helpful assistant that provides concise and accurate information."
+    system_prompt: str = (
+        "You are a helpful assistant that provides concise and accurate information."
+    )
     temperature: float = 0.7
     available_plugins: List[str] = []
     chat_history: List[Dict[str, str]] = []
@@ -32,7 +34,9 @@ class AgentRequest(BaseModel):
 
 class MultiAgentRequest(BaseModel):
     message: str
-    system_prompt: str = "You are a helpful assistant that provides concise and accurate information."
+    system_prompt: str = (
+        "You are a helpful assistant that provides concise and accurate information."
+    )
     temperature: float = 0.7
     available_plugins: List[str] = []
     chat_history: List[Dict[str, str]] = []
@@ -55,12 +59,12 @@ class SummarizeRequest(BaseModel):
 
 class FilterRequest(BaseModel):
     text: str
-    filters: Dict[str, bool] = {"pii": True,
-                                "profanity": True, "logging": True}
+    filters: Dict[str, bool] = {"pii": True, "profanity": True, "logging": True}
 
 
 class KernelResetRequest(BaseModel):
     clear_memory: bool = False
+
 
 # New models for the Process Framework
 
@@ -73,6 +77,7 @@ class ChatResponse(BaseModel):
     process_id: str
     response: str
     chat_history: List[Dict[str, str]] = []
+
 
 # New models for the Content Creation Process
 
