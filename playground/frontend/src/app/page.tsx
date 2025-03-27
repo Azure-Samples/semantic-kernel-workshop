@@ -12,6 +12,7 @@ import { Shield } from "lucide-react";
 import { Languages } from "lucide-react";
 import { Workflow } from "lucide-react";
 import { Bot } from "lucide-react";
+import { Users } from "lucide-react";
 
 // Define features
 const features = [
@@ -70,6 +71,13 @@ const features = [
     icon: <Bot className="h-8 w-8 text-indigo-600" />,
     path: '/agent',
     color: '#4f46e5'
+  },
+  {
+    title: 'Multi Agent Demo',
+    description: 'Experience multiple AI agents working together to solve complex tasks.',
+    icon: <Users className="h-8 w-8 text-rose-600" />,
+    path: '/multi-agent',
+    color: '#e11d48'
   }
 ];
 
