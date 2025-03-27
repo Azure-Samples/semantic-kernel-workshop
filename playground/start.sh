@@ -22,7 +22,7 @@ echo "--------------------------------"
 # Start the backend server
 echo "Starting backend server..."
 cd backend
-uv run run.py &
+uv run main.py &
 BACKEND_PID=$!
 
 # Wait a bit for the backend to initialize

@@ -18,7 +18,6 @@ const API_URL = 'http://localhost:8000';
 
 type FiltersState = {
   pii: boolean;
-  profanity: boolean;
   logging: boolean;
 };
 
@@ -28,9 +27,15 @@ type ExampleInput = {
 };
 
 type ResultType = {
-  input_processing?: string;
-  output_processing?: string;
-  logs?: string[];
+  result?: string;
+  debug?: {
+    input_processing?: string;
+    output_processing?: string;
+    logs?: string;
+    log_count?: number;
+    input_detections?: any[];
+    output_detections?: any[];
+  };
 };
 
 const exampleInputs: ExampleInput[] = [
@@ -45,10 +50,6 @@ const exampleInputs: ExampleInput[] = [
   {
     title: "Multiple PII Elements",
     text: "Hi, I'm Alice Smith (alice.smith@gmail.com). My card is 4111-1111-1111-1111 and phone is (555) 123-4567."
-  },
-  {
-    title: "With Profanity",
-    text: "I'm really angry about my badword1 bill. My card ending in 1111 was charged incorrectly."
   }
 ];
 
@@ -57,9 +58,9 @@ export default function FiltersDemo() {
   const [result, setResult] = useState<ResultType | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showDebugLogs, setShowDebugLogs] = useState(false);
   const [filters, setFilters] = useState<FiltersState>({
     pii: true,
-    profanity: true,
     logging: true
   });
 
@@ -106,7 +107,7 @@ export default function FiltersDemo() {
           <p className="text-gray-600 max-w-2xl mx-auto">
             Experience how Semantic Kernel function invocation filters provide control and visibility over the AI pipeline.
             These filters intercept function calls, allowing pre-processing of inputs and post-processing of outputs,
-            enabling powerful features like PII detection, content moderation, and execution logging.
+            enabling detection of personally identifiable information (PII) like credit cards, emails, and phone numbers.
           </p>
         </div>
 
@@ -141,15 +142,6 @@ export default function FiltersDemo() {
                       onCheckedChange={() => handleToggleFilter('pii')}
                     />
                     <Label htmlFor="pii-filter">PII Detection Filter (Pre/Post Processing)</Label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Switch 
-                      id="profanity-filter"
-                      checked={filters.profanity}
-                      onCheckedChange={() => handleToggleFilter('profanity')}
-                    />
-                    <Label htmlFor="profanity-filter">Content Moderation Filter (Pre/Post Processing)</Label>
                   </div>
                   
                   <div className="flex items-center space-x-2">
@@ -197,7 +189,7 @@ export default function FiltersDemo() {
                   onClick={handleProcessText}
                   disabled={loading}
                 >
-                  {loading ? 'Processing...' : 'Process Text'}
+                  {loading ? 'Processing...' : 'Process & Detect Sensitive Info'}
                 </Button>
               </div>
             </CardContent>
@@ -216,55 +208,129 @@ export default function FiltersDemo() {
                   </div>
                 ) : result ? (
                   <div className="space-y-6">
-                    {result.input_processing && (
-                      <Card className="border border-slate-200 bg-slate-50">
+                    {/* AI Response Card - Display first */}
+                    {result.result && (
+                      <Card className="border border-slate-200 bg-blue-50">
                         <CardContent className="p-4">
                           <div className="flex items-center gap-2 mb-3">
-                            <Upload className="h-5 w-5 text-slate-600" />
-                            <h3 className="font-medium text-slate-600">Pre-Processing Results</h3>
+                            <svg className="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                            </svg>
+                            <h3 className="font-medium text-blue-600">AI Response</h3>
                           </div>
-                          <p className="text-sm text-slate-500 mb-2">
-                            Detected and processed by input filters:
-                          </p>
-                          <div className="mt-1">
-                            {result.input_processing}
+                          <div className="mt-1 bg-white p-4 rounded-md border border-blue-100">
+                            <pre className="whitespace-pre-line text-sm font-sans">{result.result}</pre>
                           </div>
                         </CardContent>
                       </Card>
                     )}
                     
-                    {result.output_processing && (
-                      <Card className="border border-slate-200 bg-slate-50">
+                    {/* Input Detections Card */}
+                    {result.debug && (
+                      <Card className="border border-amber-200 bg-amber-50">
                         <CardContent className="p-4">
                           <div className="flex items-center gap-2 mb-3">
-                            <Download className="h-5 w-5 text-slate-600" />
-                            <h3 className="font-medium text-slate-600">Post-Processing Results</h3>
+                            <Upload className="h-5 w-5 text-amber-600" />
+                            <h3 className="font-medium text-amber-600">Input Detection Results</h3>
                           </div>
-                          <p className="text-sm text-slate-500 mb-2">
-                            Detected and processed by output filters:
-                          </p>
-                          <div className="mt-1">
-                            {result.output_processing}
+                          <div className="mt-1 p-3 bg-white rounded-md border border-amber-100">
+                            <p className="text-sm text-slate-500 mb-2">{result.debug.input_processing}</p>
+                            {result.debug.input_detections && result.debug.input_detections.length > 0 ? (
+                              <div className="mt-2">
+                                <p className="text-sm font-medium text-amber-700 mb-1">Detected Items:</p>
+                                <div className="space-y-2">
+                                  {result.debug.input_detections.map((item, idx) => {
+                                    const [type, value] = item.split(': ');
+                                    return (
+                                      <div key={idx} className="flex items-center">
+                                        <Badge className="mr-2 bg-amber-100 text-amber-800 hover:bg-amber-100">
+                                          {type}
+                                        </Badge>
+                                        <span className="text-sm">{value}</span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            ) : null}
                           </div>
                         </CardContent>
                       </Card>
                     )}
                     
-                    {result.logs && result.logs.length > 0 && (
+                    {/* Output Detections Card */}
+                    {result.debug && (
+                      <Card className="border border-green-200 bg-green-50">
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-2 mb-3">
+                            <Download className="h-5 w-5 text-green-600" />
+                            <h3 className="font-medium text-green-600">Output Detection Results</h3>
+                          </div>
+                          <div className="mt-1 p-3 bg-white rounded-md border border-green-100">
+                            <p className="text-sm text-slate-500 mb-2">{result.debug.output_processing}</p>
+                            {result.debug.output_detections && result.debug.output_detections.length > 0 ? (
+                              <div className="mt-2">
+                                <p className="text-sm font-medium text-green-700 mb-1">Detected Items:</p>
+                                <div className="space-y-2">
+                                  {result.debug.output_detections.map((item, idx) => {
+                                    const [type, value] = item.split(': ');
+                                    return (
+                                      <div key={idx} className="flex items-center">
+                                        <Badge className="mr-2 bg-green-100 text-green-800 hover:bg-green-100">
+                                          {type}
+                                        </Badge>
+                                        <span className="text-sm">{value}</span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            ) : null}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                    
+                    {/* Debug logs toggle */}
+                    {result.debug && result.debug.logs && (
+                      <div className="flex justify-end mb-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setShowDebugLogs(!showDebugLogs)}
+                          className="text-xs flex items-center gap-1"
+                        >
+                          {showDebugLogs ? (
+                            <>
+                              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-3 w-3">
+                                <path d="M3.13523 8.84197C3.3241 9.04343 3.64052 9.0412 3.82828 8.83717L7.5 4.86432L11.1717 8.83717C11.3595 9.0412 11.6759 9.04343 11.8648 8.84197C12.0536 8.64051 12.0514 8.32409 11.8602 8.13633L7.84418 3.78989C7.7583 3.69039 7.63232 3.63506 7.5 3.63506C7.36768 3.63506 7.2417 3.69039 7.15582 3.78989L3.13982 8.13633C2.94858 8.32409 2.94636 8.64051 3.13523 8.84197Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+                              </svg>
+                              Hide Logs
+                            </>
+                          ) : (
+                            <>
+                              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-3 w-3">
+                                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.9588 3.82828 6.16283L7.5 10.1357L11.1717 6.16283C11.3595 5.9588 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0514 6.67591 11.8602 6.86367L7.84418 11.2101C7.7583 11.3096 7.63232 11.3649 7.5 11.3649C7.36768 11.3649 7.2417 11.3096 7.15582 11.2101L3.13982 6.86367C2.94858 6.67591 2.94636 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+                              </svg>
+                              Show Logs
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                    
+                    {/* Execution Logs - Show only when toggle is on */}
+                    {result.debug && result.debug.logs && showDebugLogs && (
                       <Card className="border bg-slate-900">
                         <CardContent className="p-4">
                           <div className="flex items-center gap-2 mb-3">
                             <FilterX className="h-5 w-5 text-slate-300" />
-                            <h3 className="font-medium text-slate-300">Execution Logs</h3>
+                            <h3 className="font-medium text-slate-300">Execution Logs ({result.debug.log_count || 0} entries)</h3>
                           </div>
                           <div className="bg-slate-800 p-3 rounded-md max-h-[200px] overflow-y-auto">
-                            <div className="space-y-1">
-                              {result.logs.map((log, index) => (
-                                <p key={index} className="text-slate-300 font-mono text-xs">
-                                  {log}
-                                </p>
-                              ))}
-                            </div>
+                            <pre className="text-slate-300 font-mono text-xs whitespace-pre-wrap">
+                              {result.debug.logs}
+                            </pre>
                           </div>
                         </CardContent>
                       </Card>
