@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-import { ThemeProvider, createTheme } from '../../../../playground/frontend/node_modules/@mui/material/styles'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { 
   AppBar, Toolbar, Typography, Container, Box, Drawer, 
   List, ListItem, ListItemIcon, ListItemText, CssBaseline,
