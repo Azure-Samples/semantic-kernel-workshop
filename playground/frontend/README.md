@@ -21,8 +21,7 @@ This is a modern frontend for the Semantic Kernel Playground, built with Next.js
 First, make sure the backend server is running. Then, run the development server:
 
 ```bash
-cd playground/frontend-shadcn
-npm install
+npm install --legacy-peer-deps
 npm run dev
 ```
 
