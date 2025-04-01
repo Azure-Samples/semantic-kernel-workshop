@@ -10,5 +10,10 @@ from app.main import app
 
 if __name__ == "__main__":
     import uvicorn
+    import os
 
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    # Read host and port from environment variables, with defaults
+    host = os.environ.get("BACKEND_HOST", "0.0.0.0")
+    port = int(os.environ.get("BACKEND_PORT", 8000))
+
+    uvicorn.run("app.main:app", host=host, port=port, reload=True)
