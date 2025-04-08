@@ -16,6 +16,9 @@ AZURE_OPENAI_EMBEDDING_DEPLOYMENT=your-embedding-deployment-name
 ```
 cd frontend && npm install
 ```
+```
+cd backend && pip install -r pyproject.toml
+```
 
 3. Start the application:
 ```
