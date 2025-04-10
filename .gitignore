@@ -400,3 +400,6 @@ FodyWeavers.xsd
 *.sln.iml
 .env
 .DS_Store
+
+# UV
+**/uv.lock

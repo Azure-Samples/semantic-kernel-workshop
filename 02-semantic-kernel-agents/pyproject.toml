@@ -1,0 +1,11 @@
+[project]
+name = "02-semantic-kernel-agents"
+version = "0.1.0"
+description = "UV Semantic Kernel Agents"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "jupyter>=1.1.1",
+    "python-dotenv==1.0.1",
+    "semantic-kernel==1.27.2",
+]
