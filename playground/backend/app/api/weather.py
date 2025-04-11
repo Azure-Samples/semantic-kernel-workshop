@@ -48,7 +48,7 @@ async def get_weather(request: WeatherRequest):
 
         # Get response from the agent
         response = await agent.get_response(
-            chat_history, execution_settings=execution_settings
+            messages=chat_history, execution_settings=execution_settings
         )
 
         # Track function calls and results

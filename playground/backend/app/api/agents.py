@@ -58,7 +58,7 @@ async def agent_chat(request: AgentRequest):
 
         # Get the response from the agent
         response = await agent.get_response(
-            chat_history, execution_settings=execution_settings
+            messages=chat_history, execution_settings=execution_settings
         )
 
         # Track function calls
