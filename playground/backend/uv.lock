@@ -210,7 +210,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "python-multipart", specifier = ">=0.0.20" },
-    { name = "semantic-kernel", specifier = ">=1.24.0" },
+    { name = "semantic-kernel", specifier = ">=1.27.2" },
     { name = "uvicorn", specifier = ">=0.34.0" },
 ]
 
@@ -969,7 +969,7 @@ wheels = [
 
 [[package]]
 name = "openai"
-version = "1.66.3"
+version = "1.72.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -981,9 +981,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a3/77/5172104ca1df35ed2ed8fb26dbc787f721c39498fc51d666c4db07756a0c/openai-1.66.3.tar.gz", hash = "sha256:8dde3aebe2d081258d4159c4cb27bdc13b5bb3f7ea2201d9bd940b9a89faf0c9", size = 397244 }
+sdist = { url = "https://files.pythonhosted.org/packages/41/56/41de36c0e9f787c406211552ecf2ca4fba3db900207c5c158c4dc67263fc/openai-1.72.0.tar.gz", hash = "sha256:f51de971448905cc90ed5175a5b19e92fd94e31f68cde4025762f9f5257150db", size = 426061 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/78/5a/e20182f7b6171642d759c548daa0ba20a1d3ac10d2bd0a13fd75704a9ac3/openai-1.66.3-py3-none-any.whl", hash = "sha256:a427c920f727711877ab17c11b95f1230b27767ba7a01e5b66102945141ceca9", size = 567400 },
+    { url = "https://files.pythonhosted.org/packages/03/1c/a0870f31bd71244c8c3a82e171677d9a148a8ea1cb157308cb9e06a41a37/openai-1.72.0-py3-none-any.whl", hash = "sha256:34f5496ba5c8cb06c592831d69e847e2d164526a2fb92afdc3b5cf2891c328c3", size = 643863 },
 ]
 
 [[package]]
@@ -1614,7 +1614,7 @@ wheels = [
 
 [[package]]
 name = "semantic-kernel"
-version = "1.24.0"
+version = "1.28.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -1636,9 +1636,9 @@ dependencies = [
     { name = "scipy" },
     { name = "websockets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9d/a2/cee2157e57287649cd0ba417ba771dbf50aea914fa5c5d71d6a39ffeae8e/semantic_kernel-1.24.0.tar.gz", hash = "sha256:6f2f3d97cab8211f22e048b9abcc91f1e194a269068f9e02396277fdcd508e58", size = 442738 }
+sdist = { url = "https://files.pythonhosted.org/packages/2b/44/7e56342fe56632a5835adabfd35b1e89bff54b18fab208ceab715c220a8f/semantic_kernel-1.28.0.tar.gz", hash = "sha256:05567190e118b1121efb46d1b8e242f6fc593d7d60e406bc8fa719d80a30b218", size = 490829 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/86/e7/ceaa915074d0f74bde7512aac6903990d8ec36ae7f28cd6dd6018afe2da7/semantic_kernel-1.24.0-py3-none-any.whl", hash = "sha256:1c2db0c94409e74ec48a62ddc1531fef4431d269853322b77f4718230f6a5e7d", size = 762154 },
+    { url = "https://files.pythonhosted.org/packages/77/d5/ef11ad435f3ad0c4ec344709b3e779166e973eadb67586c58bc6ab52cc71/semantic_kernel-1.28.0-py3-none-any.whl", hash = "sha256:84c899ad60fd3de1ad345f5f5cf3b6b18a94da1b397e01c96bc48a2fec7b8cee", size = 807149 },
 ]
 
 [[package]]

@@ -34,6 +34,19 @@ For setup instructions and details on how to run the playground, refer to the [P
 - Azure OpenAI API access (API key, endpoint, and deployment name)
 - Basic knowledge of Python programming
 - Understanding of prompt engineering concepts (helpful but not required)
+- [UV package manager](https://docs.astral.sh/uv/getting-started/installation/)
+
+### Local Dependencies Setup
+
+The project is managed by pyproject.toml and [uv package manager](https://docs.astral.sh/uv/getting-started/installation/).
+
+For local execution init the .venv environment using [uv package manager](https://docs.astral.sh/uv/getting-started/installation/):
+
+```shell
+uv sync --prerelease=allow
+. ./.venv/bin/activate
+```
+>OBS! At the time of writing the workshop depends on the prerelease libraries. 
 
 ## Workshop Modules
 
