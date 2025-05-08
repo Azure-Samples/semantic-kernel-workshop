@@ -50,6 +50,23 @@ uv sync --prerelease=allow
 
 ## Workshop Modules
 
+### 00. Setup
+
+Copy `.env.example` to `.env` and update it, so it points to your Azure OpenAI and Azure Search instance.
+
+Example:
+```
+AZURE_OPENAI_ENDPOINT=https://xxxxxx.openai.azure.com/
+AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=gpt-4o
+AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME=text-embedding-ada-002
+AZURE_OPENAI_API_KEY=xxxxxxxxxxx
+AZURE_OPENAI_API_VERSION=2025-03-01-preview
+
+## Optional for RAG with Azure AI Search
+AZURE_AI_SEARCH_ENDPOINT=https://xxxxxxxxxx.search.windows.net
+AZURE_AI_SEARCH_API_KEY=xxxxxxxxx
+```
+
 ### 01. Introduction to Semantic Kernel
 
 Learn the fundamentals of Semantic Kernel:
