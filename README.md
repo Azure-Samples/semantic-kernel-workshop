@@ -93,7 +93,16 @@ Master the creation and orchestration of AI agents:
 - `02.1-agents.ipynb`: Creating and configuring agents
 - `02.2-agents-chats.ipynb`: Inter-agent communication and complex patterns
 
-### 03. Process Framework
+### 02. Semantic Kernel with MCP
+
+Learn to how to connect an SK Agent to MCP:
+- Running your MCP server
+- Connecting SK to it
+
+**Key Notebooks:**
+- `03.1-intro-to-processes.ipynb`: Building stateful, event-driven AI processes
+
+### 04. Process Framework
 
 Learn to build structured, event-driven AI workflows:
 - Understanding the Process Framework architecture
@@ -103,7 +112,7 @@ Learn to build structured, event-driven AI workflows:
 - Creating maintainable and testable AI workflows
 
 **Key Notebooks:**
-- `03.1-intro-to-processes.ipynb`: Building stateful, event-driven AI processes
+- `04.1-intro-to-processes.ipynb`: Building stateful, event-driven AI processes
 
 ## Project Structure
 
