@@ -98,7 +98,7 @@ Learn to how to connect an SK Agent to MCP:
 - Using an Agent in Semantic Kernel to make calls to it
 
 **Key Notebooks:**
-- `03.1-intro-to-processes.ipynb`: Building stateful, event-driven AI processes
+- `03.1-sk-with-mcp.ipynb`: Semantic Kernel with MCP example
 
 ### 04. Process Framework
 
