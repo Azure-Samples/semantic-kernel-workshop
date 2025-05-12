@@ -73,12 +73,10 @@ Learn the fundamentals of Semantic Kernel:
 - Core architectural components (Kernel, AI Services, Plugins)
 - Building semantic functions with prompts
 - Creating native functions with Python code
-- Implementing memory for persistent context
 - Enabling automatic function calling for AI agents
 
 **Key Notebooks:**
 - `01-intro.ipynb`: Core concepts, services, and function creation
-- `02-memory.ipynb`: Implementing semantic memory with embeddings
 
 ### 02. Semantic Kernel Agents
 
@@ -97,7 +95,7 @@ Master the creation and orchestration of AI agents:
 
 Learn to how to connect an SK Agent to MCP:
 - Running your MCP server
-- Connecting SK to it
+- Using an Agent in Semantic Kernel to make calls to it
 
 **Key Notebooks:**
 - `03.1-intro-to-processes.ipynb`: Building stateful, event-driven AI processes
@@ -119,19 +117,20 @@ Learn to build structured, event-driven AI workflows:
 ```
 semantic-kernel-workshop/
 ├── 01-intro-to-semantic-kernel/    # Introduction to core concepts
-│   ├── 01-intro.ipynb              # Basic concepts and functions
-│   └── 02-memory.ipynb             # Memory implementation
+│   └── 01-intro.ipynb              # Basic concepts and functions
 ├── 02-semantic-kernel-agents/      # Agent creation and orchestration
-│   ├── 02.1-agents.ipynb           # Agent fundamentals
+│   ├── 02.1-single-agents.ipynb    # Agent fundamentals
 │   ├── 02.2-agents-chats.ipynb     # Multi-agent communication
-│   └── .env.sample                 # Environment variables template
-├── 03-process-framework/           # Structured AI workflows
-│   └── 03.1-intro-to-processes.ipynb  # Process fundamentals
-└── playground/                     # Interactive application
-    ├── backend/                    # FastAPI server
-    ├── frontend/                   # React application
-    ├── start.sh                    # Launch script
-    └── README.md                   # Playground documentation
+├── 03-semantic-kernel-mcp/         # Using SK with MCP
+│   └── 03.1-sk-with-mcp.ipynb      # SK + MCP example
+├── 04-process-framework/           # Structured AI workflows
+│   └── 04.1-intro-to-processes.ipynb  # Process fundamentals
+├── playground/                     # Interactive application
+│   ├── backend/                    # FastAPI server
+│   ├── frontend/                   # React application
+│   ├── start.sh                    # Launch script
+│   └── README.md                   # Playground documentation
+└── .env.example                 # Environment variables template
 ```
 
 ## Getting Started
