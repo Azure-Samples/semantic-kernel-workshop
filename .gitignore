@@ -403,3 +403,6 @@ FodyWeavers.xsd
 
 # UV
 **/uv.lock
+
+# Virtual Environment for Python projects
+.venv/
