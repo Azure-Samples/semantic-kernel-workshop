@@ -137,6 +137,22 @@ Learn to build structured, event-driven AI workflows:
 **Key Notebooks:**
 - `04.1-intro-to-processes.ipynb`: Building stateful, event-driven AI processes
 
+### 05. Semantic Kernel & Agent-to-Agent (A2A) Protocol
+
+Master advanced agent communication patterns:
+- Implementing Agent-to-Agent (A2A) communication protocols
+- Creating specialized agents that can communicate with each other
+- Building distributed AI systems with modular, reusable agents
+- Understanding A2A server components and agent cards
+- Developing production-ready agent architectures
+
+**Key Notebooks:**
+- `05-semantic-kernel-a2a-tutorial.ipynb`: Complete A2A implementation with flight booking and travel planning agents
+
+**Standalone Applications:**
+- `flight-booking-agent/`: Specialized flight booking agent server
+- `travel-booking-agent/`: Travel planning agent with web interface
+
 ## Project Structure
 
 ```
@@ -150,6 +166,10 @@ semantic-kernel-workshop/
 │   └── 03.1-sk-with-mcp.ipynb      # SK + MCP example
 ├── 04-process-framework/           # Structured AI workflows
 │   └── 04.1-intro-to-processes.ipynb  # Process fundamentals
+├── 05-semantic-kernel-a2a/         # Agent-to-Agent communication
+│   ├── 05-semantic-kernel-a2a-tutorial.ipynb  # Complete A2A tutorial
+│   ├── flight-booking-agent/       # Standalone flight booking agent
+│   └── travel-booking-agent/       # Standalone travel planning agent
 ├── playground/                     # Interactive application
 │   ├── backend/                    # FastAPI server
 │   ├── frontend/                   # React application
