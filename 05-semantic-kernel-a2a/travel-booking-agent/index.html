@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Booking Agent Chatbot</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 500px; /* Added a fixed width for better chat layout */
+            max-width: 90%; /* Responsive adjustment */
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px; /* Space before chat messages */
+        }
+        input[type="text"] {
+            width: 100%; /* Make input fill its container */
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        #chat-body {
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            text-align: left; /* Align chat messages to the left */
+            max-height: 300px; /* Limit chat height and make it scrollable */
+            overflow-y: auto;
+            display: flex; /* Use flexbox for chat messages */
+            flex-direction: column;
+            gap: 10px; /* Space between messages */
+        }
+        .chat-message {
+            padding: 10px 15px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word; /* Ensure long words wrap */
+        }
+        .user-message {
+            background-color: #e0f7fa; /* Light blue for user */
+            align-self: flex-end; /* Align user messages to the right */
+        }
+        .agent-message {
+            background-color: #f1f8e9; /* Light green for agent */
+            align-self: flex-start; /* Align agent messages to the left */
+        }
+
+        /* Styles for the logos */
+        .logo-container {
+            display: flex;
+            justify-content: center; /* Center everything */
+            align-items: center; /* Vertically align items */
+            margin-top: 20px;
+            gap: 10px; /* Space between items (logos and text) */
+            flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+        }
+
+        .logo {
+            max-width: 80px; /* Slightly smaller logos for better inline flow */
+            height: auto;
+            vertical-align: middle; /* Aligns the image nicely with text */
+        }
+
+        .logo-text {
+            font-size: 1.1em; /* Make text slightly larger */
+            font-weight: bold;
+            color: #555;
+            white-space: nowrap; /* Prevent text from breaking within a phrase */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Travel Planner Agent</h2>
+        <form id="booking-form">
+            <input type="text" name="user_input" placeholder="e.g., Book a flight from New York to London on July 15th" autocomplete="off" id="user-input">
+            <button type="submit">Send Message</button>
+        </form>
+
+        <div id="chat-body">
+            </div>
+
+        <div class="logo-container">
+            <span class="logo-text">Demo of</span>
+            <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google Logo" class="logo">
+            <span class="logo-text">A2A with</span>
+            <img src="https://msblogs.thesourcemediaassets.com/2012/08/8867.Microsoft_5F00_Logo_2D00_for_2D00_screen.jpg" alt="Microsoft Logo" class="logo">
+            <span class="logo-text">Semantic Kernel</span>
+        </div>
+    </div>
+
+    <script>
+        const bookingForm = document.getElementById('booking-form');
+        const userInputField = document.getElementById('user-input');
+        const chatBody = document.getElementById('chat-body');
+
+        // Function to add a message to the chat body
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message');
+            if (sender === 'user') {
+                messageDiv.classList.add('user-message');
+            } else if (sender === 'agent') {
+                messageDiv.classList.add('agent-message');
+            }
+            messageDiv.textContent = text;
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
+        }
+
+        bookingForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            const userText = userInputField.value.trim();
+            if (userText === '') {
+                return; // Don't send empty messages
+            }
+
+            // Display user's message
+            addMessage(userText, 'user');
+            userInputField.value = ''; // Clear the input field
+
+            try {
+                // Send the user input to your backend's /chat endpoint
+                const response = await fetch('/chat', { // *** Changed endpoint to /chat ***
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `user_input=${encodeURIComponent(userText)}`
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json(); // Get the JSON response
+                console.log("Agent raw response:", data); // Log the full response
+
+                // *** Extract the response_text directly from the JSON ***
+                if (data && data.response) {
+                    const agentMessage = data.response; // Direct access to the text
+                    addMessage(agentMessage, 'agent');
+                } else {
+                    addMessage("Agent did not provide a valid response.", 'agent');
+                }
+
+            } catch (error) {
+                console.error('Error sending message or parsing response:', error);
+                addMessage("Error communicating with the agent. Please try again.", 'agent');
+            }
+        });
+    </script>
+</body>
+</html>

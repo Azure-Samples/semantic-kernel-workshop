@@ -5,11 +5,19 @@ description = "A workshop for Semantic Kernel"
 readme = "README.md"
 requires-python = "==3.12.*"
 dependencies = [
+    "a2a-sdk>=0.2.8",
+    "fastapi>=0.116.0",
     "fastmcp>=2.2.0",
+    "flask>=3.1.1",
+    "flask-cors>=6.0.1",
+    "httpx>=0.28.1",
     "jupyter>=1.1.1",
     "jupyterlab>=4.5.0a0",
     "mermaid-py>=0.7.1",
+    "python-a2a>=0.5.9",
     "python-dotenv==1.0.1",
+    "requests>=2.32.3",
     "rich>=14.0.0",
-    "semantic-kernel[azure]==1.31.0",
+    "semantic-kernel==1.31.0",
+    "uvicorn>=0.35.0",
 ]
